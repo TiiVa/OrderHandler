@@ -1,0 +1,56 @@
+﻿@page "/logout"
+@using OrderHandler.Client.Services
+@using Microsoft.AspNetCore.Authentication
+@using OrderHandler.Client.Services
+@inject NavigationManager NavigationManager
+@inject CartService CartService
+
+<PageTitle>Logout</PageTitle>
+
+<Grid>
+    <Column ColumnSize="ColumnSize.Is12">
+        <Div class="row">
+            <Div class="col-12">
+                <Div class="card">
+                    <Div class="card-body flex-column">
+                        <Div class="text-center">
+                            <span class="text-danger fw-bolder">You have successfully logged out of CGI Purchase</span>
+                        </Div>
+                    </Div>
+                </Div>
+            </Div>
+        </Div>
+    </Column>
+    <Column ColumnSize="ColumnSize.Is12" TextAlignment="TextAlignment.Center">
+        <Div>
+            <Link To="/">
+                Go to CGI Purchase homepage
+            </Link>
+        </Div>
+        <Div>
+            <Link To="/login">
+                Sign in again
+            </Link>
+        </Div>
+    </Column>
+</Grid>
+
+
+@code
+{
+
+    [CascadingParameter] public HttpContext HttpContext { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        await base.OnInitializedAsync();
+
+        if (HttpContext.User.Identity.IsAuthenticated)
+        {
+            await HttpContext.SignOutAsync();
+            CartService.CartProducts.Clear();
+            NavigationManager.NavigateTo("/logout", true);
+        }
+    }
+
+}

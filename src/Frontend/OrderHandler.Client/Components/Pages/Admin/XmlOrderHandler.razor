@@ -1,0 +1,29 @@
+﻿@page "/XmlOrderHandler"
+@using Microsoft.AspNetCore.Authorization
+@rendermode InteractiveServer
+@attribute [Authorize(Roles="Admin")]
+
+<PageTitle>Xml order import</PageTitle>
+
+<EditForm Model="xmlOrderDto" OnValidSubmit="SubmitFile"> Upload order file
+    <div>
+        <label for="uploadFile"></label>
+        <InputFile id="uploadFile" OnChange="@LoadFiles" class="form-control" accept=".xml" />
+    </div>
+    <br />
+    <Button Type="ButtonType.Submit" Color="Color.Primary">Create order</Button>
+    <Button Color="Color.Primary" Clicked="BackToOverView" Outline>Back</Button>
+</EditForm>
+
+
+@if (errors.Count > 0)
+{
+    <h2>Errors</h2>
+    <ul class="text-danger">
+        @foreach (var error in errors)
+        {
+            <li>@error</li>
+        }
+    </ul>
+    
+}

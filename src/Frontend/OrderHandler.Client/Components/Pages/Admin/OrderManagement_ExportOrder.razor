@@ -1,0 +1,156 @@
+﻿@page "/admin/order_management/export"
+@rendermode InteractiveServer
+@using System.Xml.Serialization
+@using OrderHandler.Client.ServiceInterfaces
+@using OrderHandler.DataTransferContracts.DTOs.Order
+@using OrderHandler.DataTransferContracts.DTOs.User
+@using OrderHandler.DataTransferContracts.DTOs.XmlOrderDtos
+@using Microsoft.AspNetCore.Authorization
+@attribute [Authorize(Roles = "Admin")]
+
+<PageTitle>Admin/ExportOrder</PageTitle>
+
+<Button Color="Color.Primary" Clicked="BackToOverView" Outline>Back</Button>
+
+<LoadingIndicator @bind-Visible="@_visible">
+    <Container Position="Position.Relative" Margin="Margin.Is5.FromTop.Is5.FromBottom">
+        <Div class="row justify-content-center mb-5">
+            <Virtualize Items="@OrderDtoList">
+
+                @if (@context.IsActive)
+                {
+                    <Card Border="Border.Is1.Rounded.Info" TextAlignment="TextAlignment.Center" Shadow="Shadow.Default" class="col-md-3 justify-content-center d-flex" Margin="Margin.Is3.FromBottom.Is3.FromEnd">
+                        <CardBody TextColor="TextColor.Dark">
+                            <CardTitle TextWeight="TextWeight.SemiBold">Order number @context.Id</CardTitle>
+                            @{
+                                var userRightNow = UserDtoList.FirstOrDefault(u => context.OrderProducts.Any() && u.Id == context.OrderProducts[0].Order?.UserId);
+                            }
+                            @if (@userRightNow?.FirstName == @userRightNow?.LastName)
+                            {
+                                <CardText>Ordered by @userRightNow?.FirstName</CardText>
+                            }
+                            @if (@userRightNow?.FirstName != @userRightNow?.LastName)
+                            {
+                                <CardText>Ordered by @userRightNow?.FirstName @userRightNow?.LastName</CardText>
+                            }
+                            <CardText> Products in order: </CardText>
+                            <br />
+                            @foreach (var product in @context.OrderProducts)
+                            {
+                                <li>Product @product.ProductId - @product.Name</li>
+                                <CardText>Price @product.Price:-, @product.Quantity pcs</CardText>
+                                <br />
+                            }
+                            <CardText>Order total @context.OrderSum:-</CardText>
+                            <br />
+                        </CardBody>
+                        <Button Outline Margin="Margin.Is4.FromBottom.Is3.FromStart.Is3.FromEnd" Clicked="() => ExportOrderToXml(context)" Size="Size.ExtraSmall" Color="Color.Info">
+                            Export order <Icon Name="IconName.ArrowUp" />
+                        </Button>
+                    </Card>
+                    <br />
+                }
+
+            </Virtualize>
+        </Div>
+    </Container>
+</LoadingIndicator>
+
+@code {
+
+    [Inject] private IOrderService OrderService { get; set; }
+
+    [Inject] private IUserService UserService { get; set; }
+
+    [Inject] private IProductService ProductService { get; set; }
+
+    [Inject] private NavigationManager NavigationManager { get; set; }
+
+
+    public List<OrderDto> OrderDtoList { get; set; } = [];
+
+    public List<UserDto> UserDtoList { get; set; } = [];
+
+    private bool _visible;
+
+
+    protected override async Task OnInitializedAsync()
+    {
+        OrderDtoList.AddRange(await OrderService.GetAllAsync());
+        UserDtoList.AddRange(await UserService.GetAllAsync());
+    }
+
+    private async Task ExportOrderToXml(OrderDto orderDto)
+    {
+
+        _visible = true;
+        await Task.Delay(3000);
+
+        var productsForOrder = new List<XmlOrderProductDto>();
+
+        var userForOrder = UserDtoList.FirstOrDefault(u => u.Id == orderDto.UserId);
+
+        foreach (var product in orderDto.OrderProducts)
+        {
+            var productForOrder = await ProductService.GetByIdAsync(product.ProductId);
+
+            var xmlProduct = new XmlOrderProductDto
+                {
+                    XmlProduct = new XmlProductDto
+                    {
+                        Id = productForOrder.Id.ToString(),
+                        Name = productForOrder.Name,
+                        Description = productForOrder.Description,
+                        Price = productForOrder.Price,
+                        Color = productForOrder.Color,
+                        IsActive = productForOrder.IsActive
+                    },
+                    ProductId = product.ProductId,
+                    Quantity = product.Quantity
+                };
+
+            productsForOrder.Add(xmlProduct);
+        }
+
+        var xmlOrderDto = new XmlOrderDto
+            {
+                Id = orderDto.Id,
+                OrderSum = orderDto.OrderSum,
+                IsActive = orderDto.IsActive,
+                OrderProducts = productsForOrder,
+                XmlUser = new XmlUserDto
+                {
+                    Id = userForOrder.Id,
+                    FirstName = userForOrder.FirstName,
+                    LastName = userForOrder.LastName,
+                    Email = userForOrder.Email,
+                    Phone = userForOrder.Phone,
+                    Password = userForOrder.Password,
+                    Role = userForOrder.Role,
+                    StreetAddress = userForOrder.StreetAddress,
+                    ZipCode = userForOrder.ZipCode,
+                    City = userForOrder.City,
+                    Country = userForOrder.Country,
+                    Orders = null,
+                    IsActive = userForOrder.IsActive
+                }
+            };
+
+        string newFileName = orderDto.Id.ToString();
+
+        var xmlSerializer = new XmlSerializer(typeof(XmlOrderDto));
+        using (var writer =
+               new StreamWriter($@"C:\Users\tiina.valimaki\Desktop\XML_Testar\OrderToXML{newFileName}.xml"))
+        {
+            xmlSerializer.Serialize(writer, xmlOrderDto);
+        }
+
+        _visible = false;
+    }
+
+    private void BackToOverView()
+    {
+        NavigationManager.NavigateTo("/orders");
+    }
+
+}

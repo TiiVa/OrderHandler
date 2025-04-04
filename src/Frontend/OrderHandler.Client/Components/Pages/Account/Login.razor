@@ -1,0 +1,45 @@
+﻿@page "/login"
+@inject NavigationManager navigationManager
+
+
+<PageTitle>Login</PageTitle>
+
+
+<Div Margin="Margin.IsAuto.OnX.Is5.FromTop" Width="Width.Is50">
+    <Heading Size="HeadingSize.Is2" Margin="Margin.Is3.FromBottom" TextAlignment="TextAlignment.Center">
+        Sign in to your account
+    </Heading>
+
+    <Card Shadow="Shadow.Default">
+        <CardBody>
+            <EditForm Model="LoginUserDto" OnSubmit="Authenticate" FormName="loginForm">
+                <DataAnnotationsValidator />
+                <Div class="mb-3">
+                    <FieldLabel RequiredIndicator>
+                        Email
+                    </FieldLabel>
+                    <InputText @bind-Value="LoginUserDto.Email" Placeholder="name@email.com" class="form-control"></InputText>
+                    <ValidationMessage For="() => LoginUserDto.Email"></ValidationMessage>
+                </Div>
+                <Div class="mb-3">
+                    <FieldLabel RequiredIndicator>
+                        Password
+                    </FieldLabel>
+                    <InputText @bind-Value="LoginUserDto.Password" Placeholder="********" class="form-control" type="password"></InputText>
+                    <ValidationMessage For="() => LoginUserDto.Password"></ValidationMessage>
+                </Div>
+                <Div class="mb-3 text-center">
+                    <span class="text-danger">@errorMessage</span>
+                </Div>
+                <Div class="mb-3">
+                    <button type="submit" class="btn btn-primary">Sign in</button>
+                </Div>
+                <Div>
+                    Don’t have an account yet? <Anchor To="/register" TextColor="TextColor.Primary">Sign up</Anchor>
+                </Div>
+            </EditForm>
+        </CardBody>
+    </Card>
+</Div>
+
+

@@ -1,0 +1,44 @@
+﻿@page "/user/MyProfile"
+@using Microsoft.AspNetCore.Authorization
+@rendermode InteractiveServer
+@inject NavigationManager NavigationManager
+@attribute [Authorize(Roles = "Admin, User")]
+
+<PageTitle>User/My profile</PageTitle>
+
+<Link Size="Size.Small" Color="Color.Primary" Clicked="GoToMyOrders" Margin="Margin.Is1.FromEnd">Go to my orders</Link>
+<Link Size="Size.Small" Color="Color.Primary" Clicked="EditMyDetails" Margin="Margin.Is1.FromEnd">Edit my details</Link>
+
+<Container Margin="Margin.Is5.FromTop">
+    <Div Width="Width.Auto" Padding="Padding.Is5" TextAlignment="TextAlignment.Center" TextSize="TextSize.Heading4">
+        <Card Shadow="Shadow.Large">
+            <Heading Margin="Margin.Is5.FromBottom.Is4.FromTop.Is3.FromStart.Is3.FromEnd" style="text-align: center; color:darkred; text-bold;">
+                Welcome to Your Profile
+            </Heading>
+            <p style="color:darkred;">
+                Manage your account and stay on top of your orders with ease. Here, you can view your recent purchases, track your orders, and update your personal details.
+
+                Your Orders – View your order history, track shipments, or reorder your favorite items.
+                Account Details – Keep your information up to date by editing your contact details, password, and preferences.
+                <br/> <br/>
+                Need help or have questions? Our support team is always <a href="/about">here</a> to assist you!
+            </p>
+
+        </Card>
+            </Div>
+</Container>
+
+
+@code {
+
+    private void GoToMyOrders()
+    {
+        NavigationManager.NavigateTo("/user/orders");
+    }
+
+    private void EditMyDetails()
+    {
+        NavigationManager.NavigateTo("/user/profile");
+    }
+
+}

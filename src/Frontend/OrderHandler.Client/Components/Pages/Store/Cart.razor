@@ -1,0 +1,63 @@
+﻿@page "/store/cart"
+@using Microsoft.AspNetCore.Authorization
+@rendermode InteractiveServer
+@attribute [Authorize(Roles = "Admin, User")]
+
+<PageTitle>Store/Cart</PageTitle>
+
+
+<Container Position="Position.Relative" Margin="Margin.Is5.FromTop">
+    <Div class="row justify-content-center">
+        @foreach (var item in CartService.CartProducts.DistinctBy(c => c.ProductId))
+        {
+            var quantity = CartService.CountQuantity(item);
+
+            <Card Border="Border.Is1.Danger" Width="Width.Is25" Shadow="Shadow.Default" TextAlignment="TextAlignment.Center" Margin="Margin.Is3.FromBottom.Is5.FromStart">
+                <CardBody>
+                    <p><strong>@item.Name</strong></p>
+                    <p>@item.Price:- / pcs</p>
+                    
+                    @if (quantity > 0)
+                    {
+                        <Div class="row justify-content-center">
+                            <div class="d-flex mb-4" style="max-width: 150px">
+                                <button class="btn btn-outline-danger px-2 me-0" @onclick="@(() => RemoveFromCart(item.ProductId))">
+                                    <i class="fas fa-minus"></i>
+                                </button>
+                                <div class="d-flex align-items-center ms-0 me-0">
+                                    <input min="1" readonly="true" name="quantity" value="@CartService.CartProducts.Count(c => c.ProductId == item.ProductId)" type="number" class="form-control quantity-input" />
+                                </div>
+                                <button class="btn btn-success px-2 ms-0" @onclick="@(() => AddToCart(item.ProductId))">
+                                    <i class="fas fa-plus"></i>
+                                </button>
+                            </div>
+                        </Div>
+                        
+                    }
+                </CardBody>
+            </Card>
+
+        }
+        @if (CartService.CartProducts.Count == 0)
+        {
+            <p>No items in cart</p>
+        }
+        
+    </Div>
+    <Div Margin="Margin.Is5.FromTop" class="row justify-content-center">
+        <Div class="col-4 d-flex flex-column align-items-center">
+            <Div Margin="Margin.Is2.FromTop" class="row justify-content-center">
+                <Heading Size="HeadingSize.Is5" Margin="Margin.Is5.FromTop">Total price: @CartService.TotalForCart() SEK</Heading>
+            </Div>
+            <Div Margin="Margin.Is3.FromTop.Is5.FromBottom" class="row justify-content-center">
+                <Div class="justify-content-center">
+                    <Button Shadow="Shadow.Large" Color="Color.Primary" Outline @onclick="CloseShoppingCart" Margin="Margin.Is5.FromBottom.Is1.FromEnd" Size="Size.ExtraSmall">Close shopping cart</Button>
+                    @if (CartService.CartProducts.Count > 0)
+                    {
+                        <Button Shadow="Shadow.Large" Color="Color.Success" Outline @onclick="GoToCheckOut" Size="Size.ExtraSmall" Margin="Margin.Is5.FromBottom">Go to checkout</Button>
+                    }
+                </Div>
+            </Div>
+        </Div>
+    </Div>
+</Container>

@@ -1,0 +1,184 @@
+﻿@page "/store/products"
+@using Microsoft.AspNetCore.Authorization
+@rendermode InteractiveServer
+@attribute [Authorize(Roles = "Admin, User")]
+
+<PageTitle>Store</PageTitle>
+
+@if (ShowShop)
+{
+    <Container Breakpoint="Breakpoint.Tablet" Position="Position.Relative" Margin="Margin.Is5.FromTop">
+    
+        <Div class="row justify-content-center mb-5">
+            <Div TextWeight="TextWeight.Bold" class="col-2">
+                <InputText @bind-Value="@SearchQuery" class="form-control shadow-sm bg-white rounded" Placeholder="Search product"></InputText>
+            </Div>
+            <Div class="col-2">
+                <Button Shadow="Shadow.Default" Clicked="() => SearchProducts(SearchQuery)" Color="Color.Primary" Outline>Search</Button>
+            </Div>
+            <Div class="col-2">
+                <Heading TextColor="TextColor.Dark" Size="HeadingSize.Is5" Margin="Margin.Is2.FromBottom.Is2.FromEnd">Total @TotalForCart():-</Heading>
+            </Div>
+            <Div class="col-1">
+                <Button Shadow="Shadow.Default" Size="Size.Small" Color="Color.Primary" Outline Clicked="ShowShoppingCart">Shopping cart</Button>
+            </Div>
+        </Div>
+    </Container>
+
+
+
+    <Container Position="Position.Relative" Margin="Margin.Is5.FromTop.Is5.FromBottom">
+        <Div class="row justify-content-center">
+            <Virtualize Items="@FilteredProducts">
+                <Card TextAlignment="TextAlignment.Center" Shadow="Shadow.Default" class="col-md-3 justify-content-center d-flex" Margin="Margin.Is3.FromBottom.Is3.FromEnd">
+                    <CardImage Source="Images/img4.jpg" Alt="Placeholder image" />
+                    <CardBody TextColor="TextColor.Dark">
+                        <CardHeader TextSize="TextSize.Heading5">@context.Name</CardHeader>
+                        <br/>
+                        <CardText TextColor="TextColor.Secondary">@context.Description</CardText>
+                        <br/>
+                        <CardText>Price: @context.Price:-</CardText>
+                        <CardText>Item number: @context.Id</CardText>
+                        <br/>
+                    </CardBody>
+                    <Div Margin="Margin.Is4.FromBottom">
+                        <Button Size="Size.ExtraSmall" Clicked="() => RemoveFromCart(context.Id)" Color="Color.Danger" Outline Margin="Margin.Is2.FromTop">
+                            Remove <Icon Name="IconName.CartMinus"/>
+                        </Button>
+                        <Button Size="Size.ExtraSmall" Clicked="() => AddToCart(context.Id)" Color="Color.Success" Margin="Margin.Is2.FromTop">
+                            Add <Icon Name="IconName.CartPlus"/>
+                        </Button>
+                    </Div>
+                </Card>
+            </Virtualize>
+        </Div>
+
+        <Offcanvas @ref="offcanvasRef" ShowBackdrop Placement="Placement.End">
+            <OffcanvasHeader>
+                Cart
+                <CloseButton Clicked="@HideOffCanvas"/>
+            </OffcanvasHeader>
+            <OffcanvasBody>
+                @foreach (var item in CartService.CartProducts.DistinctBy(c => c.ProductId))
+                {
+                    var quantity = CartService.CountQuantity(item);
+
+                    <Card Border="Border.Is1.Danger" Shadow="Shadow.Default" TextAlignment="TextAlignment.Center" Margin="Margin.Is3.FromBottom">
+                        <CardBody TextAlignment="TextAlignment.Center">
+                            <Row>
+                                <p><strong>@item.Name</strong></p>
+                                <p>Price @item.Price:- / pcs</p>
+                            </Row>
+                            <Row>
+                                @if (quantity > 0)
+                                {
+                                    <Div class="row justify-content-center">
+                                        <div class="d-flex mb-4" style="max-width: 150px">
+                                            <button class="btn btn-outline-danger px-2 me-0" @onclick="@(() => RemoveFromCart(item.ProductId))">
+                                                <i class="fas fa-minus"></i>
+                                            </button>
+                                            <div class="d-flex align-items-center">
+                                                <input min="1" readonly="true" name="quantity" value="@CartService.CartProducts.Count(c => c.ProductId == item.ProductId)" type="number" class="form-control quantity-input"/>
+                                            </div>
+                                            <button class="btn btn-success px-2" @onclick="@(() => AddToCart(item.ProductId))">
+                                                <i class="fas fa-plus"></i>
+                                            </button>
+                                        </div>
+                                    </Div>
+
+                                }
+                            </Row>
+                        </CardBody>
+                    </Card>
+                }
+                @if (CartService.CartProducts.Count == 0)
+                {
+                    <p>No items in cart</p>
+                }
+                <Row Margin="Margin.Is5.FromTop">
+                    <h5>Total price: @CartService.TotalForCart():-</h5>
+                </Row>
+                <Row Margin="Margin.Is3.FromTop">
+                    <Div class="col">
+                        <Button Color="Color.Primary" @onclick="CloseShoppingCart" Margin="Margin.Is5.FromBottom.Is1.FromEnd" Size="Size.ExtraSmall" Outline>Close shopping cart</Button>
+                        @if (CartService.CartProducts.Count > 0)
+                        {
+                            <Button Color="Color.Success" @onclick="GoToCheckOut" Size="Size.ExtraSmall" Margin="Margin.Is5.FromBottom">Go to checkout</Button>
+                            <Button Color="Color.Danger" @onclick="ToggleModal" Size="Size.ExtraSmall" Outline Margin="Margin.Is5.FromBottom">Delete cart</Button>
+                        }
+                    </Div>
+                </Row>
+            </OffcanvasBody>
+        </Offcanvas>
+    </Container>
+
+
+
+
+    @if (_modalVisible)
+    {
+        <Div Flex="Flex.JustifyContent.Center">
+            <Button Color="Color.Primary" Clicked="@ToggleModal">
+                Show delete confirmation
+            </Button>
+
+            <Modal @bind-Visible="@_modalVisible">
+                <ModalContent Centered>
+                    <ModalHeader>
+                        <ModalTitle>Remove all products in cart</ModalTitle>
+                        <CloseButton/>
+                    </ModalHeader>
+                    <ModalBody>
+                        <Div Flex="Flex.JustifyContent.Center.AlignItems.Center" Padding="Padding.Is3">
+                            <Icon Name="IconName.Delete" IconSize="IconSize.x3"/>
+                        </Div>
+                        <Paragraph TextAlignment="TextAlignment.Center">
+                            Are you sure you want to remove all products?
+                        </Paragraph>
+                    </ModalBody>
+                    <ModalFooter Flex="Flex.JustifyContent.Center.AlignItems.Center" Gap="Gap.Is3">
+                        <Button Color="Color.Secondary" Outline Clicked="@ToggleModal">
+                            No, cancel
+                        </Button>
+                        <Button Clicked="ClearCart" Color="Color.Danger">
+                            Yes, I'm sure
+                        </Button>
+                    </ModalFooter>
+                </ModalContent>
+            </Modal>
+        </Div>
+    }
+
+
+}
+
+@if (ShowSingleProduct)
+{
+    <Div class="row justify-content-center mt-5">
+        <Card @bind-Value="@SearchedProduct" TextAlignment="TextAlignment.Center" Shadow="Shadow.Default" class="col-md-3 justify-content-center d-flex" Margin="Margin.Is3.FromBottom.Is3.FromEnd">
+            <CardImage Source="Images/img4.jpg" Alt="Placeholder image" />
+            <CardBody TextColor="TextColor.Dark">
+                <CardTitle Size="5">@SearchedProduct.Name</CardTitle>
+                <br />
+                <CardText TextColor="TextColor.Secondary">@SearchedProduct.Description</CardText>
+                <br />
+                <CardText>Price: @SearchedProduct.Price:-</CardText>
+                <CardText>Item number: @SearchedProduct.Id</CardText>
+                <br/>
+                <Button Size="Size.ExtraSmall" Clicked="() => RemoveFromCart(SearchedProduct.Id)" Color="Color.Danger" Outline Margin="Margin.Is2.FromTop">
+                    Remove <Icon Name="IconName.CartMinus" />
+                </Button>
+                <Button Size="Size.ExtraSmall" Clicked="() => AddToCart(SearchedProduct.Id)" Color="Color.Success" Margin="Margin.Is2.FromTop">
+                    Add <Icon Name="IconName.CartPlus" />
+                </Button>
+                <Button Size="Size.ExtraSmall" Clicked="SeeAllProducts" Color="Color.Primary" Outline Margin="Margin.Is2.FromTop">Close</Button>
+            </CardBody>
+        </Card>
+    </Div>
+}
+
+
+
+
+
+

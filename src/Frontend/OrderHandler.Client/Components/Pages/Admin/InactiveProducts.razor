@@ -1,0 +1,57 @@
+﻿@page "/products/status=inactive"
+@using OrderHandler.Client.ServiceInterfaces
+@using OrderHandler.DataTransferContracts.DTOs.Product
+@using OrderHandler.Client.Components.ProjectComponents
+@using Microsoft.AspNetCore.Authorization
+@rendermode InteractiveServer
+@inject IProductService ProductService
+@inject NavigationManager NavigationManager
+@attribute [Authorize(Roles="Admin")]
+
+<PageTitle>Inactive products</PageTitle>
+
+<ProductManagementMenu></ProductManagementMenu>
+
+<Div class="container mb-5" Margin="Margin.Is5.FromBottom.Is5.FromTop">
+    <Div class="row justify-content-center">
+        <Virtualize Items="@InactiveProductsDtoList">
+            <Card TextAlignment="TextAlignment.Center" Shadow="Shadow.Default" class="col-md-3 justify-content-center d-flex" Margin="Margin.Is3.FromBottom.Is3.FromEnd">
+                <CardBody>
+                    <CardTitle Size="5">@context.Name</CardTitle>
+                    <br/>
+                    <CardText>@context.Description</CardText>
+                    <br />
+                    <CardText>Price: @context.Price:-</CardText>
+                    @if (@context.IsActive is false)
+                    {
+                        <CardText>Status: Inactive product</CardText>
+                    }
+                    <CardText>Item number: @context.Id</CardText>
+                    <br />
+                </CardBody>
+            </Card>
+        </Virtualize>
+    </Div>
+    <Div class="row justify-content-center mt-5">
+        <Div class="col-2">
+            <Button Color="Color.Primary" Outline Size="Size.Small" Clicked="GoBackToOverView">Back to overview</Button>
+        </Div>
+    </Div>
+</Div>
+
+@code {
+
+    public List<ProductDto> InactiveProductsDtoList { get; set; } = [];
+
+    protected override async Task OnInitializedAsync()
+    {
+        InactiveProductsDtoList.AddRange(await ProductService.GetAllInactiveProducts());
+        
+    }
+
+    private void GoBackToOverView()
+    {
+        NavigationManager.NavigateTo("/productById");
+    }
+
+}

@@ -1,0 +1,74 @@
+﻿@page "/store/checkout"
+@using Microsoft.AspNetCore.Authorization
+@rendermode InteractiveServer
+@attribute [Authorize(Roles = "Admin, User")]
+
+<PageTitle>Store/Checkout</PageTitle>
+
+<Div Margin="Margin.Is5.FromTop" class= "row justify-content-center">
+    <Heading Size="HeadingSize.Is6" Margin="Margin.Is5.FromBottom" class="text-center">Below is an overview of your order, @_fullName!</Heading>
+</Div>
+
+<Container Position="Position.Relative" Margin="Margin.Is5.FromTop">
+    <Div class="row justify-content-center">
+        @foreach (var item in CartService.CartProducts.DistinctBy(c => c.ProductId))
+        {
+            var quantity = CartService.CountQuantity(item);
+
+            <Card Border="Border.Is1.Danger" Width="Width.Is25" Shadow="Shadow.Default" TextAlignment="TextAlignment.Center" Margin="Margin.Is3.FromBottom.Is5.FromStart">
+                <CardBody>
+                    <p><strong>@item.Name</strong></p>
+                    <p>@item.Price:- / pcs</p>
+                    @if (quantity > 0)
+                    {
+                        <p>Quantity: @CartService.CartProducts.Count(c => c.ProductId == item.ProductId)</p>
+                    }
+                </CardBody>
+            </Card>
+        }
+
+    </Div>
+    <Div Margin="Margin.Is5.FromTop" class="row justify-content-center">
+        <Div class="col-4 d-flex flex-column align-items-center">
+            <Div Margin="Margin.Is2.FromTop" class="row justify-content-center">
+                <Heading Size="HeadingSize.Is5" Margin="Margin.Is5.FromTop">Total price: @CartService.TotalForCart() SEK</Heading>
+            </Div>
+            <Div Margin="Margin.Is3.FromTop.Is5.FromBottom" class="row justify-content-center">
+                <Div class="justify-content-center">
+                    <Button Shadow="Shadow.Large" Color="Color.Primary" Outline @onclick="GoBackToStore" Margin="Margin.Is5.FromBottom.Is1.FromEnd" Size="Size.ExtraSmall">Go back to store</Button>
+                    <Button Shadow="Shadow.Large" Color="Color.Success" Outline @onclick="AddOrder" Size="Size.ExtraSmall" Margin="Margin.Is5.FromBottom">Confirm order</Button>
+                </Div>
+            </Div>
+        </Div>
+    </Div>
+</Container>
+
+
+@if (ModalVisible)
+{
+    <Div Flex="Flex.JustifyContent.Center">
+
+        <Modal @bind-Visible="@ModalVisible">
+            <ModalContent Centered>
+                <ModalHeader>
+                    <CloseButton />
+                </ModalHeader>
+                <ModalBody>
+                    <Div Flex="Flex.JustifyContent.Center.AlignItems.Center" Padding="Padding.Is3">
+                        <Icon Name="IconName.CheckCircle" IconSize="IconSize.x3" TextColor="TextColor.Success" />
+                    </Div>
+                    <Paragraph TextAlignment="TextAlignment.Center">
+                        Thank you for your purchase! Order confirmation will be sent to @_userName within shortly.
+                    </Paragraph>
+                </ModalBody>
+                <ModalFooter Flex="Flex.JustifyContent.Center.AlignItems.Center" Gap="Gap.Is3">
+                    <Button Color="Color.Primary" Clicked="@ToggleModal">
+                        Continue
+                    </Button>
+                </ModalFooter>
+            </ModalContent>
+        </Modal>
+    </Div>
+
+
+}

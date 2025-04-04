@@ -1,0 +1,34 @@
+﻿@inject NavigationManager NavigationManager
+
+<Div class="row justify-content-center mt-5">
+    <Buttons class="col-6">
+        <Tooltip Text="Overview of all active products in assortment" Placement="TooltipPlacement.Top">
+            <Button TextWeight="TextWeight.Bold" TextColor="TextColor.Dark" Shadow="Shadow.Default" Color="Color.Primary" Outline Clicked="ShowAllProducts">Product Overview</Button>
+        </Tooltip>
+        <Tooltip Text="Add a new product to CGI Purchase assortment" Placement="TooltipPlacement.Top">
+            <Button TextWeight="TextWeight.Bold" TextColor="TextColor.Dark" Shadow="Shadow.Default" Color="Color.Warning" Outline Clicked="GoToAddNewProductPage">Add new product</Button>
+        </Tooltip>
+        <Tooltip Text="Get an overview of all orders placed for a product" Placement="TooltipPlacement.Top">
+            <Button TextWeight="TextWeight.Bold" TextColor="TextColor.Dark" Shadow="Shadow.Default" Color="Color.Info" Outline Clicked="ShowProductByIdView">Search product in orders</Button>
+        </Tooltip>
+    </Buttons>
+</Div>
+
+@code {
+
+    private void ShowAllProducts()
+    {
+        NavigationManager.NavigateTo("/admin/product_management/productOverView");
+    }
+
+    private void GoToAddNewProductPage()
+    {
+        NavigationManager.NavigateTo("/product_management/add");
+    }
+
+    private void ShowProductByIdView()
+    {
+        NavigationManager.NavigateTo("/productById");
+    }
+
+}

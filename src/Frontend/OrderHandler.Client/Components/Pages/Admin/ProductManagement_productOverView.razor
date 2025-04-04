@@ -1,0 +1,167 @@
+﻿@page "/admin/product_management/productOverView"
+@rendermode InteractiveServer
+@using OrderHandler.Client.Components.ProjectComponents
+@using Microsoft.AspNetCore.Authorization
+@attribute [Authorize(Roles = "Admin")]
+
+<PageTitle>Admin/Product overview</PageTitle>
+
+<ProductManagementMenu></ProductManagementMenu>
+
+@if (ProductsAreDisplayed)
+{
+
+    <Div class="container mb-5" Margin="Margin.Is5.FromBottom.Is5.FromTop">
+        <Div class="row justify-content-center">
+            <Virtualize Items="@ProductDtoList">
+                <Card Border="Border.Is1.Rounded.Primary" TextAlignment="TextAlignment.Center" Shadow="Shadow.Large" class="col-md-3 justify-content-center d-flex" Margin="Margin.Is3.FromBottom.Is3.FromEnd">
+                    <CardBody>
+                        <CardTitle Size="5">@context.Name</CardTitle>
+                        <br/>
+                        <CardText>@context.Description</CardText>
+                        <br />
+                        <CardText>Price: @context.Price:-</CardText>
+                        @if (@context.IsActive)
+                        {
+                            <CardText>Status: Active product</CardText>
+                        }
+                        @if (@context.IsActive is false)
+                        {
+                            <CardText>Status: Inactive product</CardText>
+                        }
+                        <CardText>Item number: @context.Id</CardText>
+                        <br />
+                    </CardBody>
+                    <Button Margin="Margin.Is4.FromBottom.Is3.FromStart.Is3.FromEnd" Shadow="Shadow.Default" Color="Color.Primary" Size="Size.Small" Clicked="() => UpdateProductForm(context)" Outline>Update or inactivate</Button>
+                </Card>
+            </Virtualize>
+        </Div>
+    </Div>
+
+}
+
+@if (UpdateProductFormIsDisplayed)
+{
+    <Card Shadow="Shadow.Default" Margin="Margin.IsAuto.OnX.Is5.FromBottom.Is5.FromTop" Padding="Padding.Is5.OnX" Width="Width.Is50">
+        <CardBody>
+            <Div >
+                <Heading Size="HeadingSize.Is2" Margin="Margin.Is3.FromBottom">
+                    Update product
+                </Heading>
+                <EditForm Model="UpdateProductDto" OnValidSubmit="() => UpdateProduct(UpdateProductDto)" FormName="addNewProductForm">
+                    <Field>
+                        <FieldLabel>
+                            Product Name
+                        </FieldLabel>
+                        <FieldBody>
+                            <TextEdit @bind-Text="@UpdateProductDto.Name" Placeholder="Type product name" />
+                        </FieldBody>
+                    </Field>
+                        <Field>
+                            <FieldLabel>
+                                Description
+                            </FieldLabel>
+                            <FieldBody>
+                                <TextEdit @bind-Text="UpdateProductDto.Description" Placeholder="Product description" />
+                            </FieldBody>
+                        </Field>
+                        <Field ColumnSize="ColumnSize.IsFull.OnTablet.IsHalf.OnDesktop">
+                            <FieldLabel>
+                                Color
+                            </FieldLabel>
+                            <FieldBody>
+                                <InputText @bind-Value="UpdateProductDto.Color" class="form-control" />
+                            </FieldBody>
+                            <Field ColumnSize="ColumnSize.IsFull.OnTablet.IsHalf.OnDesktop">
+                                <FieldLabel>
+                                    Price
+                                </FieldLabel>
+                                <FieldBody>
+                                    <NumericPicker TValue="double" @bind-Value="@UpdateProductDto.Price" Placeholder="0,00" />
+                                </FieldBody>
+                            </Field>
+                            <Field ColumnSize="ColumnSize.IsFull.OnTablet.IsHalf.OnDesktop">
+                                <FieldLabel>
+                                    Active product
+                                </FieldLabel>
+                                <FieldBody>
+                                    <Check TValue="bool" @bind-Checked="@UpdateProductDto.IsActive"  />
+                                </FieldBody>
+                            </Field>
+                        </Field>
+                    <Field>
+                        <button type="submit" class="btn btn-primary">Update product</button>
+                        <Button Margin="Margin.Is1.FromTop" Clicked="@ToggleDeleteProductModal" Color="Color.Danger" Outline>
+                            <Icon Name="IconName.Delete" Margin="Margin.Is2.FromEnd" />
+                            Delete product
+                        </Button>
+                    </Field>
+                </EditForm>
+            </Div>
+        </CardBody>
+    </Card>
+    <Div class="row justify-content-center mt-5">
+        <Div class="col-2">
+            <Button Size="Size.Small" Color="Color.Primary" Clicked="GoBackToAdminStartPage" Outline>Back to overview</Button>
+        </Div>
+    </Div>
+
+}
+
+@if (ModalVisible)
+{
+    <Div Flex="Flex.JustifyContent.Center">
+
+        <Modal @bind-Visible="@ModalVisible">
+            <ModalContent Centered>
+                <ModalHeader>
+                    <CloseButton />
+                </ModalHeader>
+                <ModalBody>
+                    <Div Flex="Flex.JustifyContent.Center.AlignItems.Center" Padding="Padding.Is3">
+                        <Icon Name="IconName.CheckCircle" IconSize="IconSize.x3" TextColor="TextColor.Success" />
+                    </Div>
+                    <Paragraph TextAlignment="TextAlignment.Center" TextWeight="TextWeight.Bold">
+                        Product has been added or updated!
+                    </Paragraph>
+                </ModalBody>
+                <ModalFooter Flex="Flex.JustifyContent.Center.AlignItems.Center" Gap="Gap.Is3">
+                    <Button Color="Color.Primary" Clicked="@ToggleModal">
+                        Close
+                    </Button>
+                </ModalFooter>
+            </ModalContent>
+        </Modal>
+    </Div>
+
+
+}
+@if (DeleteModalVisible)
+{
+    <Modal @bind-Visible="@DeleteModalVisible">
+        <ModalContent Centered>
+            <ModalHeader>
+                <ModalTitle>You are about to inactivate a product</ModalTitle>
+                <CloseButton />
+            </ModalHeader>
+            <ModalBody>
+                <Div Flex="Flex.JustifyContent.Center.AlignItems.Center" Padding="Padding.Is3">
+                    <Icon Name="IconName.Delete" IconSize="IconSize.x3" />
+                </Div>
+                <Paragraph TextAlignment="TextAlignment.Center">
+                    Are you sure you want to inactivate this product?
+                </Paragraph>
+            </ModalBody>
+            <ModalFooter Flex="Flex.JustifyContent.Center.AlignItems.Center" Gap="Gap.Is3">
+                <Button Color="Color.Secondary" Outline Clicked="@ToggleDeleteProductModal">
+                    No, cancel
+                </Button>
+                <Button Clicked="DeleteProduct" Color="Color.Danger">
+                    Yes, I'm sure
+                </Button>
+            </ModalFooter>
+        </ModalContent>
+    </Modal>
+
+
+}

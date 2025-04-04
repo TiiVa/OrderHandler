@@ -1,0 +1,69 @@
+﻿@using OrderHandler.Client.Services
+@inherits LayoutComponentBase
+
+<div class="page">
+    <div class="sidebar">
+        <NavMenu />
+    </div>
+
+    <main>
+        <Bar Breakpoint="Breakpoint.Desktop"
+             Background="Background.Light"
+             ThemeContrast="ThemeContrast.Light">
+            <BarBrand Margin="Margin.Is5.FromStart" TextColor="TextColor.Danger">
+                <BarLink TextWeight="TextWeight.Bold" To="/">Order handler</BarLink>
+            </BarBrand>
+            <BarToggler />
+            <BarMenu>
+                <BarStart>
+                    <BarItem>
+                        <BarLink TextColor="TextColor.Dark" TextWeight="TextWeight.Bold" To="/about">About</BarLink>
+                    </BarItem>
+                </BarStart>
+                <BarEnd>
+                    <AuthorizeView Roles="Admin, User">
+                        <Authorized>
+                            <BarItem Margin="Margin.Is2.FromEnd">
+                                <BarLink TextColor="TextColor.Dark" TextWeight="TextWeight.Bold" To="/logout">Logout</BarLink>
+                            </BarItem>
+                            <BarItem Margin="Margin.Is5.FromEnd.Is2.FromTop">
+                                <a href="/store/cart">
+                                    <div>
+                                        <Icon TextColor="TextColor.Dark" Name="IconName.ShoppingCart" Margin="Margin.Is0.FromStart"></Icon>
+                                       @*  <span class="badge">@CartService.CartBadgeQuantity</span> *@
+                                    </div>
+                                </a>
+                            </BarItem>
+                        </Authorized>
+                        <NotAuthorized>
+                            <BarItem>
+                                <BarLink TextColor="TextColor.Dark" TextWeight="TextWeight.Bold" To="/login">Log in</BarLink>
+                            </BarItem>
+                            <BarItem>
+                                <BarLink TextColor="TextColor.Dark" TextWeight="TextWeight.Bold" To="/register">Register</BarLink>
+                            </BarItem>
+                        </NotAuthorized>
+                    </AuthorizeView>
+                </BarEnd>
+            </BarMenu>
+        </Bar>
+
+        <article class="content px-4">
+            @Body
+        </article>
+    </main>
+</div>
+
+<div>
+    <Div Margin="Margin.IsAuto.OnAll" Class="footer-example">
+        <Div Padding="Padding.Is3.OnY" TextAlignment="TextAlignment.Center" TextColor="TextColor.Muted" TextSize="TextSize.Small">
+            © 2024 - Present OrderHandler Inc. All rights reserved.
+        </Div>
+    </Div>
+</div>
+
+<div id="blazor-error-ui">
+    An unhandled error has occurred.
+    <a href="" class="reload">Reload</a>
+    <a class="dismiss">🗙</a>
+</div>

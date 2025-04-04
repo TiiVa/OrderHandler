@@ -1,0 +1,52 @@
+﻿@page "/orders"
+@rendermode InteractiveServer
+@using Microsoft.AspNetCore.Authorization
+@using Microsoft.AspNetCore.Components.QuickGrid
+@using SortDirection = Microsoft.AspNetCore.Components.QuickGrid.SortDirection
+@attribute [Authorize(Roles="Admin")]
+
+<PageTitle>Admin/Order management</PageTitle>
+
+<Div class="card mb-3">
+    <Div class="card-header d-flex flex-row">
+        <h5 class="flex-fill">Orders</h5>
+        <Button Margin="Margin.Is1.FromEnd" Size="Size.Small" Color="Color.Info" Clicked="GoToOrderImport">Import</Button>
+        <Button Margin="Margin.Is1.FromEnd" Size="Size.Small" Color="Color.Info" Clicked="GoToExportOrders">Export</Button>
+        <Button Margin="Margin.Is1.FromEnd" Size="Size.Small" Color="Color.Warning" Clicked="GoToOrderCancellation">Cancellation</Button>
+
+        <Div class="px-1">
+            <select class="form-select form-select-sm" @onchange="OnPageSizeChanged">
+                <option value="5">5</option>
+                <option value="10">10</option>
+                <option value="25">25</option>
+                <option value="50">50</option>
+            </select>
+        </Div>
+    </Div>
+    <Div class="card-body pb-2 px-0 mb-0">
+        <QuickGrid Class="table table-striped m-0"
+            Items="@OrderDtoList.AsQueryable()"
+            ItemKey="@(x => x.Id)"
+            Pagination="paginationState">
+            <PropertyColumn Title="Order number"
+                            Property="@(x => x.Id)"
+                            Sortable="true"
+                            IsDefaultSortColumn="true"
+                            InitialSortDirection="SortDirection.Ascending" />
+            <PropertyColumn Title="Order sum"
+                            Property="@(x => x.OrderSum)"
+                            Sortable="true" />
+            <PropertyColumn Title="UserId"
+                            Property="@(x => x.UserId)"
+                            Sortable="true"/>
+            <PropertyColumn Title="Is active"
+                            Property="@(x => x.IsActive)" />
+            
+            
+        </QuickGrid> 
+    </Div>
+    <Div class="card-footer">
+        <Paginator State="paginationState"/>
+    </Div>
+</Div>
+

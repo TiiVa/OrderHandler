@@ -1,0 +1,105 @@
+﻿@page "/user/orders"
+@using System.Security.Claims
+@using Microsoft.AspNetCore.Authorization
+@using OrderHandler.Client.ServiceInterfaces
+@using OrderHandler.DataTransferContracts.DTOs.Order
+@rendermode InteractiveServer
+@inject IOrderService OrderService
+@inject NavigationManager NavigationManager
+@inject AuthenticationStateProvider AuthenticationStateProvider
+@attribute [Authorize(Roles = "Admin, User")]
+
+
+@if (ShowOrders)
+{
+    
+    <Div Margin="Margin.Is5.FromTop" class= "row justify-content-center">
+        <Heading Size="HeadingSize.Is6"  class="text-center">Below is an overview of your orders, @fullName!</Heading>
+    </Div>
+
+    <Container Position="Position.Relative" Margin="Margin.Is5.FromTop">
+        <Div class="row justify-content-center mb-5">
+            @if (UserOrdersDtoList.Count > 0)
+            {
+                <Virtualize Items="UserOrdersDtoList">
+                    <Card TextAlignment="TextAlignment.Center" Shadow="Shadow.Default" class="col-md-3 justify-content-center d-flex" Margin="Margin.Is3.FromBottom.Is3.FromEnd">
+                        <CardBody TextColor="TextColor.Dark">
+                            <CardHeader Margin="Margin.Is3.FromBottom" TextWeight="TextWeight.SemiBold">Order number @context.Id</CardHeader>
+                            <CardText> Products in order: </CardText>
+                            <br/>
+                            @foreach (var product in @context.OrderProducts)
+                            {
+                                <li>Product @product.ProductId - @product.Name</li>
+                                <CardText>Price @product.Price:-, @product.Quantity pcs</CardText>
+                                <br/>
+                            }
+                            <br />
+                        </CardBody>
+                        <CardFooter TextWeight="TextWeight.Bold" Margin="Margin.Is4.FromBottom">Order total: @context.OrderSum:-</CardFooter>
+                    </Card>
+                <br/>
+                </Virtualize>
+            }
+            @if (UserOrdersDtoList.Count < 1)
+            {
+                <Div class="row justify-content-center">
+                    No orders to display. <br/> <br/> <Anchor TextSize="TextSize.Large" class="row justify-content-center"  To="/store/products" TextColor="TextColor.Primary">Start shopping here!</Anchor>
+                </Div>
+            }
+        </Div>
+    </Container>
+}
+
+<Div class="row justify-content-center">
+    <Div class="col-2">
+        <Button Size="Size.Small" Color="Color.Primary" Clicked="GoBackToStartPage" Outline>Back to overview</Button>
+    </Div>
+</Div>
+
+@code {
+
+    
+    public ClaimsPrincipal? ClaimsPrincipal { get; set; }
+
+    private List<OrderDto> UserOrdersDtoList { get; set; } = [];
+
+    private bool _visible;
+    private bool ShowOrders;
+
+    private string userName;
+    private string fullName;
+
+    protected override async Task OnInitializedAsync()
+    {
+
+        var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
+        ClaimsPrincipal = authState.User;
+
+        await GetAllOrdersForUser();
+
+        if (ClaimsPrincipal.Identity.IsAuthenticated)
+        {
+            userName = ClaimsPrincipal.Identity.Name;
+            fullName = ClaimsPrincipal.FindFirstValue("FullName");
+
+        }
+
+
+    }
+
+    public async Task GetAllOrdersForUser()
+    {
+       
+        var ordersForUser = await OrderService.GetAllOrdersForAUserAsync(Convert.ToInt32(ClaimsPrincipal.Claims.FirstOrDefault(x => x.Type == "UserId").Value));
+
+        UserOrdersDtoList = ordersForUser.ToList();
+
+        ShowOrders = true;
+    }
+
+    private void GoBackToStartPage()
+    {
+        NavigationManager.NavigateTo("/user/MyProfile");
+    }
+
+}

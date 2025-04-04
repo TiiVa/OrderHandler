@@ -1,0 +1,203 @@
+﻿@page "/user/profile"
+@using Microsoft.AspNetCore.Authorization
+@rendermode InteractiveServer
+@attribute [Authorize(Roles = "Admin, User")]
+
+<Button Color="Color.Primary" Clicked="ShowCurrentDetails" Outline>View current details</Button>
+
+<LoadingIndicator @bind-Visible="@_visible">
+    
+    <Div Margin="Margin.IsAuto.OnX.Is5.FromTop" Width="Width.Is50">
+        <Heading Size="HeadingSize.Is2" Margin="Margin.Is3.FromBottom" TextAlignment="TextAlignment.Center">
+            Update your profile
+        </Heading>
+
+        <Card Shadow="Shadow.Default" Margin="Margin.Is5.FromBottom">
+            <CardBody>
+                <EditForm Model="UpdatedUserDto.Id" OnValidSubmit="UpdateUserDetails" FormName="registerForm">
+                    <DataAnnotationsValidator />
+                    <Div Margin="Margin.Is2.FromBottom">
+                        <FieldLabel RequiredIndicator>
+                            First name
+                        </FieldLabel>
+                        <FieldBody>
+                            <InputText @bind-Value="UpdatedUserDto.FirstName" class="form-control"/>
+                            <ValidationMessage For="() => UpdatedUserDto.FirstName"></ValidationMessage>
+                        </FieldBody>
+                    </Div>
+                    <Div Margin="Margin.Is2.FromBottom">
+                        <FieldLabel RequiredIndicator>
+                            Last name
+                        </FieldLabel>
+                        <FieldBody>
+                            <InputText @bind-Value="UpdatedUserDto.LastName" class="form-control"/>
+                            <ValidationMessage For="() => UpdatedUserDto.LastName"></ValidationMessage>
+                        </FieldBody>
+                    </Div>
+                    <Div Margin="Margin.Is2.FromBottom">
+                        <Label>
+                            Street address
+                        </Label>
+                        <FieldBody>
+                            <InputText @bind-Value="UpdatedUserDto.StreetAddress" class="form-control" />
+                            <ValidationMessage For="() => UpdatedUserDto.StreetAddress"></ValidationMessage>
+                        </FieldBody>
+                    </Div>
+                    <Div Margin="Margin.Is2.FromBottom">
+                        <Label>
+                            Zip code
+                        </Label>
+                        <FieldBody>
+                            <InputText @bind-Value="UpdatedUserDto.ZipCode" class="form-control" />
+                            <ValidationMessage For="() => UpdatedUserDto.ZipCode"></ValidationMessage>
+                        </FieldBody>
+                    </Div>
+                    <Div Margin="Margin.Is2.FromBottom">
+                        <Label>
+                            City
+                        </Label>
+                        <FieldBody>
+                            <InputText @bind-Value="UpdatedUserDto.City" class="form-control" />
+                            <ValidationMessage For="() => UpdatedUserDto.City"></ValidationMessage>
+                        </FieldBody>
+                    </Div>
+                    <Div Margin="Margin.Is2.FromBottom">
+                        <Label>
+                            Country
+                        </Label>
+                        <FieldBody>
+                            <InputText @bind-Value="UpdatedUserDto.Country" class="form-control" />
+                            <ValidationMessage For="() => UpdatedUserDto.Country"></ValidationMessage>
+                        </FieldBody>
+                    </Div>
+                    <Div Margin="Margin.Is2.FromBottom">
+                        <FieldLabel RequiredIndicator>
+                            Phone
+                        </FieldLabel>
+                        <FieldBody>
+                            <InputText @bind-Value="UpdatedUserDto.Phone" class="form-control" />
+                            <ValidationMessage For="() => UpdatedUserDto.Phone"></ValidationMessage>
+                        </FieldBody>
+                    </Div>
+                    <Div Margin="Margin.Is2.FromBottom">
+                        <FieldLabel RequiredIndicator>
+                            Your Email
+                        </FieldLabel>
+                        <FieldBody>
+                            <InputText @bind-Value="UpdatedUserDto.Email" Placeholder="name@company.com" Role="TextRole.Email" class="form-control" />
+                            <ValidationMessage For="() => UpdatedUserDto.Email"></ValidationMessage>
+                        </FieldBody>
+                    </Div>
+                    <Div Margin="Margin.Is2.FromBottom">
+                        <FieldLabel RequiredIndicator>
+                            Password
+                        </FieldLabel>
+                        <FieldBody>
+                            <InputText @bind-Value="UpdatedUserDto.Password" Placeholder="********" Role="TextRole.Password" class="form-control" />
+                            <ValidationMessage For="() => UpdatedUserDto.Password"></ValidationMessage>
+                        </FieldBody>
+                    </Div>
+                    @if (ClaimsPrincipal.IsInRole("Admin"))
+                    {
+                        <Field>
+                            <FieldLabel>Role</FieldLabel>
+                            <select value="@InitialRole" class="form-select form-select" @onchange="OnSelectedChanged">
+                                <option value="Admin">Admin</option>
+                                <option value="User">User</option>
+                            </select>
+                        </Field>
+                        
+                        <Field>
+                            <FieldLabel>Active user</FieldLabel>
+                            <Check TValue="bool" @bind-Checked="@UpdatedUserDto.IsActive" />
+                        </Field>
+                    }
+                    else
+                    {
+                        <Field Visibility="Visibility.Invisible">
+                            <FieldLabel>Role</FieldLabel>
+                        <InputText @bind-Value="UpdatedUserDto.Role" />
+                        </Field>
+                        <Field Visibility="Visibility.Invisible">
+                            <FieldLabel>Active user</FieldLabel>
+                            <Check TValue="bool" @bind-Checked="@UpdatedUserDto.IsActive" />
+                        </Field>
+                    }
+                    <Div>
+                        <Button Type="ButtonType.Submit" Color="Color.Primary">Update details</Button>
+                    </Div>
+                    <Button Margin="Margin.Is1.FromTop" Clicked="ToggleDeleteAccountModal" Color="Color.Danger" Outline>
+                        <Icon Name="IconName.Delete" Margin="Margin.Is2.FromEnd" />
+                        Delete account
+                    </Button>
+                </EditForm>
+            </CardBody>
+        </Card>
+    </Div>
+</LoadingIndicator>
+
+@if (DetailsUpdatedModalVisible)
+{
+    <Div Flex="Flex.JustifyContent.Center">
+
+        <Modal @bind-Visible="@DetailsUpdatedModalVisible">
+            <ModalContent Centered>
+                <ModalHeader>
+                    <CloseButton />
+                </ModalHeader>
+                <ModalBody>
+                    <Div Flex="Flex.JustifyContent.Center.AlignItems.Center" Padding="Padding.Is3">
+                        <Icon Name="IconName.CheckCircle" IconSize="IconSize.x3" TextColor="TextColor.Success" />
+                    </Div>
+                    <Paragraph TextAlignment="TextAlignment.Center">
+                        Your user details have been updated or deleted!
+                    </Paragraph>
+                </ModalBody>
+                <ModalFooter Flex="Flex.JustifyContent.Center.AlignItems.Center" Gap="Gap.Is3">
+                    <Button Color="Color.Primary" Clicked="@ToggleModal">
+                        Continue
+                    </Button>
+                </ModalFooter>
+            </ModalContent>
+        </Modal>
+    </Div>
+}
+@if (DeleteUserModalVisible)
+{
+    <Div Flex="Flex.JustifyContent.Center">
+        <Button Color="Color.Primary" Clicked="@ToggleDeleteAccountModal">
+            Show delete confirmation
+        </Button>
+
+        <Modal @bind-Visible="@DeleteUserModalVisible">
+            <ModalContent Centered>
+                <ModalHeader>
+                    <ModalTitle>You are about to delete your account</ModalTitle>
+                    <CloseButton />
+                </ModalHeader>
+                <ModalBody>
+                    <Div Flex="Flex.JustifyContent.Center.AlignItems.Center" Padding="Padding.Is3">
+                        <Icon Name="IconName.Delete" IconSize="IconSize.x3" />
+                    </Div>
+                    <Paragraph TextAlignment="TextAlignment.Center">
+                        Are you sure you want to delete your account?
+                    </Paragraph>
+                </ModalBody>
+                <ModalFooter Flex="Flex.JustifyContent.Center.AlignItems.Center" Gap="Gap.Is3">
+                    <Button Color="Color.Secondary" Outline Clicked="@ToggleDeleteAccountModal">
+                        No, cancel
+                    </Button>
+                    <Button Clicked="DeleteUserProfile" Color="Color.Danger">
+                        Yes, I'm sure
+                    </Button>
+                </ModalFooter>
+            </ModalContent>
+        </Modal>
+    </Div>
+}
+
+<Div class="row justify-content-center">
+    <Div class="col-2">
+        <Button Size="Size.Small" Color="Color.Primary" Clicked="GoBackToStartPage" Outline>Back to overview</Button>
+    </Div>
+</Div>

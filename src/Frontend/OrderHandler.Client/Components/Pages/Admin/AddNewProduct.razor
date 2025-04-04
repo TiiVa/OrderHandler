@@ -1,0 +1,134 @@
+﻿@page "/product_management/add"
+@using OrderHandler.Client.ServiceInterfaces
+@using OrderHandler.DataTransferContracts.DTOs.Product
+@using OrderHandler.Client.Components.ProjectComponents
+@using Microsoft.AspNetCore.Authorization
+@rendermode InteractiveServer
+@inject IProductService ProductService
+@inject NavigationManager NavigationManager
+@attribute [Authorize(Roles = "Admin")]
+
+<PageTitle>ProductManagement/Add</PageTitle>
+
+<ProductManagementMenu></ProductManagementMenu>
+
+<Container Margin="Margin.Is5.FromTop">
+    <Column ColumnSize="ColumnSize.IsFull">
+        <Card Border="Border.Is1.Rounded.Warning" Shadow="Shadow.Large" Margin="Margin.IsAuto.OnX.Is5.FromTop" Padding="Padding.Is5.OnX" Width="Width.Is50">
+            <CardBody>
+                <Div>
+                    <Heading Size="HeadingSize.Is2" Margin="Margin.Is3.FromBottom">
+                        Add a new product
+                    </Heading>
+                    <EditForm Model="NewProductDto" OnValidSubmit="AddProduct" FormName="addNewProductForm">
+                        <Field>
+                            <FieldLabel>
+                                Product Name
+                            </FieldLabel>
+                            <FieldBody>
+                                <TextEdit @bind-Text="@NewProductDto.Name" Placeholder="Type product name" />
+                            </FieldBody>
+                        </Field>
+                        <Fields>
+                            <Field ColumnSize="ColumnSize.IsFull.OnTablet.IsHalf.OnDesktop">
+                                <FieldLabel>
+                                    Description
+                                </FieldLabel>
+                                <FieldBody>
+                                    <TextEdit @bind-Text="NewProductDto.Description" Placeholder="Product description" />
+                                </FieldBody>
+                            </Field>
+                            <Field ColumnSize="ColumnSize.IsFull.OnTablet.IsHalf.OnDesktop">
+                                <FieldLabel>
+                                    Price
+                                </FieldLabel>
+                                <FieldBody>
+                                    <NumericPicker Min="0.00" TValue="double" @bind-Value="@NewProductDto.Price" Placeholder="0,00" />
+                                </FieldBody>
+                            </Field>
+                        </Fields>
+                        <Field>
+                            <button type="submit" class="btn btn-warning btn-sm">Add product</button>
+                        </Field>
+                    </EditForm>
+                </Div>
+            </CardBody>
+        </Card>
+    </Column>
+</Container>
+
+@if (ModalVisible)
+{
+    <Div Flex="Flex.JustifyContent.Center">
+
+        <Modal @bind-Visible="@ModalVisible">
+            <ModalContent Centered>
+                <ModalHeader>
+                    <CloseButton />
+                </ModalHeader>
+                <ModalBody>
+                    <Div Flex="Flex.JustifyContent.Center.AlignItems.Center" Padding="Padding.Is3">
+                        <Icon Name="IconName.CheckCircle" IconSize="IconSize.x3" TextColor="TextColor.Success" />
+                    </Div>
+                    <Paragraph TextAlignment="TextAlignment.Center" TextWeight="TextWeight.Bold">
+                        Product has been added or updated!
+                    </Paragraph>
+                </ModalBody>
+                <ModalFooter Flex="Flex.JustifyContent.Center.AlignItems.Center" Gap="Gap.Is3">
+                    <Button Color="Color.Primary" Clicked="@ToggleModal">
+                        Close
+                    </Button>
+                </ModalFooter>
+            </ModalContent>
+        </Modal>
+    </Div>
+
+
+}
+
+
+<Div class="row justify-content-center mt-5">
+    <Div class="col-2">
+        <Button Size="Size.Small" Color="Color.Primary" Clicked="GoBackToAdminStartPage" Outline>Back to overview</Button>
+    </Div>
+</Div>
+
+
+@code {
+
+    private ProductDto NewProductDto { get; set; } = new();
+    private bool ModalVisible;
+
+    private async Task AddProduct()
+    {
+        await ToggleModal();
+
+        var productToAdd = new ProductDto
+            {
+                Name = NewProductDto.Name,
+                Description = NewProductDto.Description,
+                Price = NewProductDto.Price,
+                IsActive = true,
+                Color = "Green"
+            };
+
+        await ProductService.AddAsync(productToAdd);
+
+        ModalVisible = true;
+        
+
+    }
+
+    private Task ToggleModal()
+    {
+        ModalVisible = !ModalVisible;
+
+        return Task.CompletedTask;
+    }
+
+
+    private void GoBackToAdminStartPage()
+    {
+        NavigationManager.NavigateTo("/admin/product_management/productOverView");
+    }
+}

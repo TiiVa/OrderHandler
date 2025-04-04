@@ -1,0 +1,113 @@
+﻿@page "/register"
+@rendermode InteractiveServer
+@inject NavigationManager NavigationManager
+
+<PageTitle>Register</PageTitle>
+
+<LoadingIndicator @bind-Visible="@_visible">
+    <Div Margin="Margin.IsAuto.OnX" Width="Width.Is50">
+        <Heading Size="HeadingSize.Is2" Margin="Margin.Is3.FromBottom" TextAlignment="TextAlignment.Center">
+            Create an account
+        </Heading>
+
+        <Card Shadow="Shadow.Default" class="mb-5">
+            <CardBody>
+                <EditForm Model="NewUserDto" OnValidSubmit="RegisterNewUser" FormName="registerForm">
+                    <DataAnnotationsValidator />
+                    <Div class="mb-2">
+                        <FieldLabel RequiredIndicator>
+                            First name
+                        </FieldLabel>
+                        <FieldBody>
+                            <TextEdit @bind-Text="@NewUserDto.FirstName" />
+                            <ValidationMessage For="() => NewUserDto.FirstName"></ValidationMessage>
+                        </FieldBody>
+                    </Div>
+                    <Div class="mb-2">
+                        <FieldLabel RequiredIndicator>
+                            Last name
+                        </FieldLabel>
+                        <FieldBody>
+                            <TextEdit @bind-Text="@NewUserDto.LastName" />
+                            <ValidationMessage For="() => NewUserDto.LastName"></ValidationMessage>
+                        </FieldBody>
+                    </Div>
+                    <Div class="mb-2">
+                        <Label>
+                            Street address
+                        </Label>
+                        <FieldBody>
+                            <TextEdit @bind-Text="@NewUserDto.StreetAddress" />
+                            <ValidationMessage For="() => NewUserDto.StreetAddress"></ValidationMessage>
+                        </FieldBody>
+                    </Div>
+                    <Div class="mb-2">
+                        <Label>
+                            Zip code
+                        </Label>
+                        <FieldBody>
+                            <TextEdit @bind-Text="@NewUserDto.ZipCode" />
+                            <ValidationMessage For="() => NewUserDto.ZipCode"></ValidationMessage>
+                        </FieldBody>
+                    </Div>
+                    <Div class="mb-2">
+                        <Label>
+                            City
+                        </Label>
+                        <FieldBody>
+                            <TextEdit @bind-Text="@NewUserDto.City" />
+                            <ValidationMessage For="() => NewUserDto.City"></ValidationMessage>
+                        </FieldBody>
+                    </Div>
+                    <Div class="mb-2">
+                        <Label>
+                            Country
+                        </Label>
+                        <FieldBody>
+                            <TextEdit @bind-Text="@NewUserDto.Country" />
+                            <ValidationMessage For="() => NewUserDto.Country"></ValidationMessage>
+                        </FieldBody>
+                    </Div>
+                    <Div class="mb-2">
+                        <FieldLabel RequiredIndicator>
+                            Phone
+                        </FieldLabel>
+                        <FieldBody>
+                            <TextEdit @bind-Text="@NewUserDto.Phone" />
+                            <ValidationMessage For="() => NewUserDto.Phone"></ValidationMessage>
+                        </FieldBody>
+                    </Div>
+                    <Div class="mb-2">
+                        <FieldLabel RequiredIndicator>
+                            Your Email
+                        </FieldLabel>
+                        <FieldBody>
+                            <TextEdit @bind-Text="@NewUserDto.Email" Placeholder="name@company.com" Role="TextRole.Email" class="form-control" />
+                            <ValidationMessage For="() => NewUserDto.Email"></ValidationMessage>
+                        </FieldBody>
+                    </Div>
+                    <Div class="mb-2">
+                        <FieldLabel RequiredIndicator>
+                            Password
+                        </FieldLabel>
+                        <FieldBody>
+                            <TextEdit @bind-Text="@NewUserDto.Password" Placeholder="********" Role="TextRole.Password" class="form-control" />
+                            <ValidationMessage For="() => NewUserDto.Password"></ValidationMessage>
+                        </FieldBody>
+                    </Div>
+                    <Div class="mb-3 text-center">
+                        <span class="text-danger">@errorMessage</span>
+                    </Div>
+                    <Div>
+                        <button type="submit" class="btn btn-primary">Create an account</button>
+                    </Div>
+                    <Field Class="mt-2">
+                        Already have an account? <Anchor To="/login" TextColor="TextColor.Primary">Login here</Anchor>
+                    </Field>
+                </EditForm>
+            </CardBody>
+        </Card>
+    </Div>
+
+</LoadingIndicator>
+

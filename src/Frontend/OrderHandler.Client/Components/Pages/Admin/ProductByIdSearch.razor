@@ -1,0 +1,129 @@
+﻿@page "/productById"
+@using OrderHandler.Client.Components.ProjectComponents
+@using Microsoft.AspNetCore.Authorization
+@rendermode InteractiveServer
+@attribute [Authorize(Roles = "Admin")]
+
+<PageTitle>ProductById</PageTitle>
+
+<ProductManagementMenu></ProductManagementMenu>
+
+@if (DisplayOrders)
+{
+    <Container Margin="Margin.Is5.FromTop">
+        <Div class="row justify-content-center">
+            <Card Border="Border.Is1.RoundedZero.Info" TextAlignment="TextAlignment.Center" Shadow="Shadow.Large" Margin="Margin.IsAuto.OnX.Is5.FromTop" Padding="Padding.Is5.OnX" Width="Width.Is50">
+                <CardBody>
+                    <Fields>
+                        <Field>
+                            <FieldLabel>
+                                Product id
+                            </FieldLabel>
+                            <FieldBody>
+                                <NumericPicker @bind-Value="@ProductId" TextAlignment="TextAlignment.Center" TValue="int" Min="0" class="form-control" Placeholder="0"></NumericPicker>
+                                <Button Size="Size.Small" Margin="Margin.Is2.FromTop" Shadow="Shadow.Default" Clicked="() => GetOrdersWithItem(ProductId)" Color="Color.Info">Search</Button>
+                            </FieldBody>
+                        </Field>
+                        <Field>
+                            <FieldLabel>
+                                Set color
+                            </FieldLabel>
+                            <FieldBody>
+                                <Select @bind-SelectedValue="@ColorChoice">
+                                    <SelectItem TextWeight="TextWeight.Bold" TextColor="TextColor.Dark" TextAlignment="TextAlignment.Center" Value="0">None</SelectItem>
+                                    <SelectItem TextWeight="TextWeight.Bold" TextColor="TextColor.Danger" TextAlignment="TextAlignment.Center" Value="1">Red</SelectItem>
+                                    <SelectItem TextWeight="TextWeight.Bold" TextColor="TextColor.Success" TextAlignment="TextAlignment.Center" Value="2">Green</SelectItem>
+                                    <SelectItem TextWeight="TextWeight.Bold" TextColor="TextColor.Primary" TextAlignment="TextAlignment.Center" Value="3">Blue</SelectItem>
+                                </Select>
+                            </FieldBody>
+
+                        </Field>
+                    </Fields>
+
+                </CardBody>
+            </Card>
+        </Div>
+    </Container>
+
+    
+
+    <Container Position="Position.Relative" Margin="Margin.Is5.FromTop.Is5.FromBottom">
+        <Div class="row justify-content-center">
+            <Heading TextSize="TextSize.Heading6" class="col-2">Results: @NumberOfResults</Heading>
+            <Virtualize Items="@OrdersWithProductList">
+                <Card Border="Border.Is1.Rounded.Info" TextAlignment="TextAlignment.Center" Shadow="Shadow.Default" class="col-md-3 justify-content-center d-flex" Margin="Margin.Is3.FromBottom.Is3.FromEnd">
+                    <CardBody>
+                        <CardHeader Margin="Margin.Is2.FromBottom" TextSize="TextSize.Heading5">Order number @context.Id</CardHeader>
+                        @{
+                            var userRightNow = UserDtoList.FirstOrDefault(u => context.OrderProducts.Any() && u.Id == context.OrderProducts[0].Order?.UserId);
+                        }
+                        @if (userRightNow?.FirstName == userRightNow?.LastName)
+                        {
+                            <CardText TextWeight="TextWeight.Bold">Ordered by @userRightNow?.FirstName</CardText>
+                        }
+                        @if (userRightNow?.FirstName != userRightNow?.LastName)
+                        {
+                            <CardText TextWeight="TextWeight.Bold">Ordered by @userRightNow?.FirstName @userRightNow?.LastName</CardText>
+                        }
+                        <CardText TextWeight="TextWeight.Bold">Products in order:</CardText>
+                        <br />
+                        @foreach (var product in context.OrderProducts)
+                        {
+                            @if (product.ProductId != ProductById.Id || ColorChoice == 0)
+                            {
+                                <CardText>Product id @product.ProductId</CardText>
+                            }
+
+                            @if (product.ProductId == ProductById.Id && ColorChoice == 1)
+                            {
+                                <CardText TextColor="TextColor.Danger" TextWeight="TextWeight.Bold">Product id @product.ProductId</CardText>
+
+                            }
+
+                            @if (product.ProductId == ProductById.Id && ColorChoice == 2)
+                            {
+                                <CardText TextColor="TextColor.Success" TextWeight="TextWeight.Bold">Product id @product.ProductId</CardText>
+                            }
+
+                            @if (product.ProductId == ProductById.Id && ColorChoice == 3)
+                            {
+                                <CardText TextColor="TextColor.Primary" TextWeight="TextWeight.Bold">Product id @product.ProductId</CardText>
+                            }
+
+                            <CardText>@product.Name</CardText>
+                            <CardText>Price: @product.Price:-</CardText>
+                            <CardText>Quantity: @product.Quantity</CardText>
+                            <br />
+                        }
+                    </CardBody>
+                    <CardFooter TextWeight="TextWeight.Bold" Margin="Margin.Is4.FromBottom">Order total: @context.OrderSum:-</CardFooter>
+                </Card>
+                <br />
+            </Virtualize>
+        </Div>
+    </Container>
+
+}
+
+@if (NoOrdersToDisplay)
+{
+    <Container Position="Position.Relative" Margin="Margin.Is5.FromTop.Is5.FromBottom">
+        <Div class="row justify-content-center">
+            <Div class="col-6 text-center">
+                <Heading Margin="Margin.Is5.FromTop" TextColor="TextColor.Danger" TextSize="TextSize.Heading6">
+                    No orders for item with id @ProductId or the item is inactive
+                </Heading>
+            </Div>
+        </Div>
+        <Div class="row justify-content-center mt-3">
+            <Div class="col-auto">
+                <Button Size="Size.Small" Color="Color.Primary" Outline Clicked="ShowAllInactiveProducts">
+                    Inactive products
+                </Button>
+            </Div>
+        </Div>
+    </Container>
+
+}
+
+

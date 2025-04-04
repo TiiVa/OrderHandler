@@ -1,0 +1,40 @@
+﻿@page "/products"
+@using Microsoft.AspNetCore.Authorization
+@rendermode InteractiveServer
+@attribute [Authorize(Roles = "Admin, User")]
+
+<PageTitle>Products</PageTitle>
+
+
+    <Div class="container" Margin="Margin.Is5.FromBottom.Is5.FromTop">
+        <Div class="row justify-content-center">
+            <Virtualize Items="@ProductDtoList">
+            <Card Border="Border.Is1.Rounded" TextAlignment="TextAlignment.Center" Shadow="Shadow.Default" class="col-md-3 justify-content-center d-flex" Margin="Margin.Is3.FromBottom.Is3.FromEnd">
+                    <CardImage Source="Images/img4.jpg" Alt="Placeholder image" />
+                    <CardBody TextColor="TextColor.Dark">
+                        <CardHeader TextSize="TextSize.Heading5">@context.Name</CardHeader>
+                        <br/>
+                        <CardText>@context.Description</CardText>
+                        <br/>
+                        <CardText>Price: @context.Price:-</CardText>
+                        @if (@context.IsActive)
+                        {
+                            <CardText>Status: In stock</CardText>
+                        }
+                        @if (@context.IsActive is false)
+                        {
+                            <CardText>Status: Out of stock</CardText>
+                        }
+                        <CardText>Item number: @context.Id</CardText>
+                        <br/>
+                    </CardBody>
+                    <Button Size="Size.ExtraSmall" Clicked="GoToStore" Color="Color.Primary" Margin="Margin.Is4.FromBottom.Is3.FromStart.Is3.FromEnd">
+                        Go to shop <Icon Name="IconName.ArrowRight" />
+                    </Button>
+                </Card>
+            </Virtualize>
+        </Div>
+    </Div>
+
+
+    

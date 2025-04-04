@@ -1,0 +1,61 @@
+﻿@page "/errorPage/{StatusCode:int}"
+@rendermode InteractiveServer
+@inject NavigationManager NavigationManager
+
+@if (Is404)
+{
+    <Div Margin="Margin.IsAuto.OnX" TextAlignment="TextAlignment.Center">
+        <Div Padding="Padding.Is5.OnY">
+            <DisplayHeading Size="DisplayHeadingSize.Is1" TextWeight="TextWeight.Bold" TextColor="TextColor.Primary" Margin="Margin.Is4.FromBottom">
+                404
+            </DisplayHeading>
+            <Paragraph TextSize="TextSize.ExtraLarge" Margin="Margin.Is4.FromBottom">
+                Something's missing.
+            </Paragraph>
+            <Paragraph Margin="Margin.Is4.FromBottom">
+                Sorry, the page you’re looking for doesn’t exist.
+            </Paragraph>
+            <Button Clicked="GoBackToHomePage" Color="Color.Primary" Size="Size.Large">
+                Back to Homepage
+            </Button>
+        </Div>
+    </Div>
+
+}
+else
+{
+    <Div Margin="Margin.IsAuto.OnX" TextAlignment="TextAlignment.Center">
+        <Div Padding="Padding.Is5.OnY">
+            <DisplayHeading Size="DisplayHeadingSize.Is1" TextWeight="TextWeight.Bold" TextColor="TextColor.Primary" Margin="Margin.Is4.FromBottom">
+                500
+            </DisplayHeading>
+            <Paragraph TextSize="TextSize.ExtraLarge" Margin="Margin.Is4.FromBottom">
+                Internal Server Error.
+            </Paragraph>
+            <Paragraph Margin="Margin.Is4.FromBottom">
+                We are already working to solve the problem.
+            </Paragraph>
+        </Div>
+    </Div>
+}
+
+
+
+@code {
+    [Parameter] 
+    public int StatusCode { get; set; }
+    private bool Is404 { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        Is404 = StatusCode == 404;
+
+        
+    }
+
+    private void GoBackToHomePage()
+    {
+        NavigationManager.NavigateTo("/");
+    }
+
+}

@@ -1,0 +1,97 @@
+﻿@page "/admin/order_management/cancellation"
+@rendermode InteractiveServer
+@using OrderHandler.Client.ServiceInterfaces
+@using OrderHandler.DataTransferContracts.DTOs.Order
+@using OrderHandler.DataTransferContracts.DTOs.User
+@using Microsoft.AspNetCore.Authorization
+@attribute [Authorize(Roles = "Admin")]
+
+<PageTitle>Admin/OrderCancellation</PageTitle>
+
+<Button Color="Color.Primary" Clicked="BackToOverView" Outline>Back</Button>
+
+<LoadingIndicator @bind-Visible="@_visible">
+<Container Position="Position.Relative" Margin="Margin.Is5.FromTop.Is5.FromBottom">
+    <Div class="row justify-content-center mb-5">
+        <Virtualize Items="@OrderDtoList">
+           
+            @if (@context.IsActive)
+            {
+                <Card Border="Border.Is1.Rounded.Danger" TextAlignment="TextAlignment.Center" Shadow="Shadow.Default" class="col-md-3 justify-content-center d-flex" Margin="Margin.Is3.FromBottom.Is3.FromEnd">
+                    <CardBody TextColor="TextColor.Dark">
+                        <CardTitle TextWeight="TextWeight.SemiBold">Order number @context.Id</CardTitle>
+                        @{
+                            var userRightNow = UserDtoList.FirstOrDefault(u => context.OrderProducts.Any() && u.Id == context.OrderProducts[0].Order?.UserId);
+                        }
+                        @if (@userRightNow?.FirstName == @userRightNow?.LastName)
+                        {
+                            <CardText>Ordered by @userRightNow?.FirstName</CardText>
+                        }
+                        @if (@userRightNow?.FirstName != @userRightNow?.LastName)
+                        {
+                            <CardText>Ordered by @userRightNow?.FirstName @userRightNow?.LastName</CardText>
+                        }
+                        <CardText> Products in order: </CardText>
+                        <br />
+                        @foreach (var product in @context.OrderProducts)
+                        {
+                            <li>Product @product.ProductId - @product.Name</li>
+                            <CardText>Price @product.Price:-, @product.Quantity pcs</CardText>
+                            <br />
+                        }
+                        <CardText>Order total @context.OrderSum:-</CardText>
+                        <br />
+                    </CardBody>
+                        <Button Outline Margin="Margin.Is4.FromBottom.Is3.FromStart.Is3.FromEnd" Clicked="() => OrderCancellation(context)" Size="Size.ExtraSmall" Color="Color.Danger">
+                        Cancel order <Icon Name="IconName.ArrowDown" />
+                    </Button>
+                </Card>
+                <br />
+            }
+           
+        </Virtualize>
+    </Div>
+</Container>
+</LoadingIndicator>
+
+@code {
+
+    [Inject] private IOrderService OrderService { get; set; }
+
+    [Inject] private IUserService UserService { get; set; }
+
+    [Inject] private IProductService ProductService { get; set; }
+
+    [Inject] private NavigationManager NavigationManager { get; set; }
+
+    
+    public List<OrderDto> OrderDtoList { get; set; } = [];
+
+    public List<UserDto> UserDtoList { get; set; } = [];
+
+    private bool _visible;
+   
+
+    protected override async Task OnInitializedAsync()
+    {
+        OrderDtoList.AddRange(await OrderService.GetAllAsync());
+        UserDtoList.AddRange(await UserService.GetAllAsync());
+    }
+
+    private async Task OrderCancellation(OrderDto orderDto)
+    {
+        _visible = true;
+        await Task.Delay(3000);
+
+        await OrderService.DeleteAsync(orderDto.Id);
+
+        _visible = false;
+        BackToOverView();
+    }
+
+    private void BackToOverView()
+    {
+        NavigationManager.NavigateTo("/orders");
+    }
+
+}

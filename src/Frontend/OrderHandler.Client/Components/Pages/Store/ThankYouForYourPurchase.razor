@@ -1,0 +1,25 @@
+﻿@page "/thankYouForYourPurchase"
+@rendermode InteractiveServer
+
+<PageTitle>Order confirmation</PageTitle>
+
+<Container Position="Position.Relative" Margin="Margin.Is5.FromTop.Is5.FromBottom">
+    <Div class="row justify-content-center">
+        <Jumbotron Background="Background.Light" Margin="Margin.Is4.FromBottom">
+            <JumbotronTitle Size="JumbotronTitleSize.Is4">Thank you for your purchase!</JumbotronTitle>
+            <JumbotronSubtitle>
+                You will receive your order confirmation by e-mail soon! Would you like to place another order?
+            </JumbotronSubtitle>
+            <Divider></Divider>
+            <Div class="col-2">
+                <Link href="/store/products">Go to store</Link> <br/>
+                <Link href="/logout">Sign out</Link>
+            </Div>
+        </Jumbotron>
+    </Div>
+    <CardImage Source="Images/img2.jpg" Alt="Placeholder image" />
+</Container>
+
+@code {
+
+}
