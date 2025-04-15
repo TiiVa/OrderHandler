@@ -6,6 +6,7 @@
 @using OrderHandler.DataTransferContracts.DTOs.User
 @using OrderHandler.DataTransferContracts.DTOs.XmlOrderDtos
 @using Microsoft.AspNetCore.Authorization
+@inject IWebHostEnvironment Env
 @attribute [Authorize(Roles = "Admin")]
 
 <PageTitle>Admin/ExportOrder</PageTitle>
@@ -138,11 +139,15 @@
 
         string newFileName = orderDto.Id.ToString();
 
+        var folderPath = Path.Combine(Env.ContentRootPath, "XmlOrders");
+        Directory.CreateDirectory(folderPath);
+
+        var filePath = Path.Combine(folderPath, $"OrderToXML{newFileName}.xml");
+
         var xmlSerializer = new XmlSerializer(typeof(XmlOrderDto));
-        using (var writer =
-               new StreamWriter($@"C:\Users\tiina.valimaki\Desktop\XML_Testar\OrderToXML{newFileName}.xml"))
+        using (var writer = new StreamWriter(filePath))
         {
-            xmlSerializer.Serialize(writer, xmlOrderDto);
+	        xmlSerializer.Serialize(writer, xmlOrderDto);
         }
 
         _visible = false;
