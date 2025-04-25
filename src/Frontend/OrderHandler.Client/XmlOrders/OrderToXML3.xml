@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<XmlOrderDto xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <Id>3</Id>
+  <TotalSum>1000</TotalSum>
+  <ArticlesInOrderList>
+    <XmlArticlesInOrderDto>
+      <OrderId>0</OrderId>
+      <Article>
+        <Id>1</Id>
+        <Name>New product</Name>
+        <Description>New product description</Description>
+        <Price>500</Price>
+        <Color>Green</Color>
+        <Status>true</Status>
+      </Article>
+      <ProductId>1</ProductId>
+      <Amount>2</Amount>
+    </XmlArticlesInOrderDto>
+  </ArticlesInOrderList>
+  <Company>
+    <Id>1</Id>
+    <CompanyName>Kalle</CompanyName>
+    <LastName>Anka</LastName>
+    <Email>kalle@kallesbolag.se</Email>
+    <Phone>0708112233</Phone>
+    <Password>KallesPw</Password>
+    <Role>Admin</Role>
+    <Address>Kalles gata 4</Address>
+    <ZipCode>431 66</ZipCode>
+    <City>Mölndal</City>
+    <Country>Sverige</Country>
+    <IsActive>true</IsActive>
+  </Company>
+  <IsActive>true</IsActive>
+</XmlOrderDto>

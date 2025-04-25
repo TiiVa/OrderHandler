@@ -6,37 +6,38 @@
 
 <PageTitle>Admin/Product overview</PageTitle>
 
-<ProductManagementMenu></ProductManagementMenu>
+
 
 @if (ProductsAreDisplayed)
 {
 
-    <Div class="container mb-5" Margin="Margin.Is5.FromBottom.Is5.FromTop">
-        <Div class="row justify-content-center">
-            <Virtualize Items="@ProductDtoList">
-                <Card Border="Border.Is1.Rounded.Primary" TextAlignment="TextAlignment.Center" Shadow="Shadow.Large" class="col-md-3 justify-content-center d-flex" Margin="Margin.Is3.FromBottom.Is3.FromEnd">
-                    <CardBody>
-                        <CardTitle Size="5">@context.Name</CardTitle>
-                        <br/>
-                        <CardText>@context.Description</CardText>
-                        <br />
-                        <CardText>Price: @context.Price:-</CardText>
-                        @if (@context.IsActive)
-                        {
-                            <CardText>Status: Active product</CardText>
-                        }
-                        @if (@context.IsActive is false)
-                        {
-                            <CardText>Status: Inactive product</CardText>
-                        }
-                        <CardText>Item number: @context.Id</CardText>
-                        <br />
-                    </CardBody>
-                    <Button Margin="Margin.Is4.FromBottom.Is3.FromStart.Is3.FromEnd" Shadow="Shadow.Default" Color="Color.Primary" Size="Size.Small" Clicked="() => UpdateProductForm(context)" Outline>Update or inactivate</Button>
-                </Card>
-            </Virtualize>
-        </Div>
-    </Div>
+	<Div class="container bg-white p-4 full-height mb-5" Margin="Margin.Is5.FromBottom.Is5.FromTop">
+		<ProductManagementMenu></ProductManagementMenu>
+		<Div class="row justify-content-center mt-5">
+			<Virtualize Items="@ProductDtoList">
+				<Card Border="Border.Is1.Rounded.Primary" TextAlignment="TextAlignment.Center" Shadow="Shadow.Large" class="col-md-3 justify-content-center d-flex" Margin="Margin.Is3.FromBottom.Is3.FromEnd">
+					<CardBody>
+						<CardTitle Size="5">@context.Name</CardTitle>
+						<br/>
+						<CardText>@context.Description</CardText>
+						<br/>
+						<CardText>Price: @context.Price:-</CardText>
+						@if (@context.IsActive)
+						{
+							<CardText>Status: Active product</CardText>
+						}
+						@if (@context.IsActive is false)
+						{
+							<CardText>Status: Inactive product</CardText>
+						}
+						<CardText>Item number: @context.Id</CardText>
+						<br/>
+					</CardBody>
+					<Button Margin="Margin.Is4.FromBottom.Is3.FromStart.Is3.FromEnd" Shadow="Shadow.Default" Color="Color.Primary" Size="Size.Small" Clicked="() => UpdateProductForm(context)" Outline>Update or inactivate</Button>
+				</Card>
+			</Virtualize>
+		</Div>
+	</Div>
 
 }
 
