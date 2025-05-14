@@ -2,54 +2,80 @@
 
 <PageTitle>Home</PageTitle>
 
+<style>
+	.card {
+		box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+		transition: box-shadow 0.03s ease-in-out;
+	}
+
+		.card:hover {
+			box-shadow: 0 10px 16px rgba(0,0,0,0.2);
+		}
+</style>
+
+
+
 
 <div class="row mb-5">
-    <div class="col-12">
-        <h2 class="fw-bolder">Welcome to <span class="text-danger">Order Handler</span> </h2>
-    </div>
-    <Div class="col-4">
-        <Div Background="Background.Light" class="card">
-            <Div class="card-body">
-                <AuthorizeView>
-                    <NotAuthorized>
-                        <span>You are not logged in. Please <a class="fw-bolder" href="/login">click here</a> to login.</span>
-                    </NotAuthorized>
-                    <Authorized>
-                        <span>
-                            Logged in as <b>
-                                @if (context.User.Identity != null)
-                                {
-                                    @context.User.Identity.Name
-                                }
-                            </b>. <a class="fw-bolder" href="/logout">Click here</a> to logout.
-                        </span>
-                    </Authorized>
-                </AuthorizeView>
-            </Div>
-        </Div>
-    </Div>
+	<div class="col-12">
+		<h2 class="fw-bolder">Welcome to <span class="text-danger">Order Handler</span> </h2>
+	</div>
+	<Div class="col-4">
+		<Div Background="Background.Light" class="card">
+			<Div class="card-body">
+				<AuthorizeView>
+					<NotAuthorized>
+						<span>You are not logged in. Please <a class="fw-bolder" href="/login">click here</a> to login.</span>
+					</NotAuthorized>
+					<Authorized>
+						<span>
+							Logged in as <b>
+								@if (context.User.Identity != null)
+								{
+									@context.User.Identity.Name
+								}
+							</b>. <a class="fw-bolder" href="/logout">Click here</a> to logout.
+						</span>
+					</Authorized>
+				</AuthorizeView>
+			</Div>
+		</Div>
+	</Div>
 </div>
 <Container Margin="Margin.Is5.FromBottom">
-    <Div Shadow="Shadow.Large" Margin="Margin.Is5.FromBottom" Width="Width.Auto" Padding="Padding.Is5" TextAlignment="TextAlignment.Center" TextSize="TextSize.Heading4">
-        <Heading Margin="Margin.Is5.FromBottom" style="text-align: center; color:black; text-bold;">
-            Welcome to Order Handler – Your One-Stop-Tech-Shop for all your needs!
-        </Heading>
-        <Paragraph style="font-size: 18px; line-height: 1.5; text-align: center; color:black;; margin-top: 20px;">
-            At Order Handler, we believe in making shopping effortless, affordable, and fun.<br /> Whether you're looking for the latest trends in tech, essential technical equipment, <br />or unique finds, we've got it all under one roof.
-            <br />
-            <br />
-            <Icon Name="IconName.Check" /> <strong>Quality you can trust</strong> – Handpicked products from trusted brands.
-            <br />
-            <Icon Name="IconName.Check" /> <strong>Affordable prices</strong> – Competitive deals on everything you love.
-            <br />
-            <Icon Name="IconName.Check" /> <strong>Fast shipping</strong> – Enjoy quick, reliable delivery straight to your door.
-            <br />
-            <Icon Name="IconName.Check" /> <strong>Customer satisfaction</strong> – Our top priority is you!
-            <br />
-            <br />
-            Explore our wide range of categories and discover unbeatable offers. <br /> Start shopping today and experience the ease and convenience of <strong>Order Handler!</strong>
-        </Paragraph>
-    </Div>
-    <Image Shadow="Shadow.Large" Border="Border.Is1.Rounded" Source="Images/img4.jpg" Text="Portable computer" Display="Display.Block" Width="Width.Is100" />
+	<Div class="card" Margin="Margin.Is5.FromBottom" Width="Width.Auto" Padding="Padding.Is5" TextAlignment="TextAlignment.Center" TextSize="TextSize.Heading4">
+		<Heading Margin="Margin.Is5.FromBottom" style="text-align: center; color:black; text-bold;">
+			Welcome to Order Handler – Your One-Stop-Tech-Shop for all your needs!
+		</Heading>
+		<Paragraph style="font-size: 18px; line-height: 1.5; text-align: center; color:darkgray; margin-top: 10px;">
+			<p>
+				At Order Handler, we believe in making shopping effortless, affordable, and fun.<br /> Whether you're looking for the latest trends in tech, essential technical equipment, <br />or unique finds, we've got it all under one roof.
+			</p>
+
+			<p>
+				<Icon Name="IconName.Check" /> <strong>Quality you can trust</strong> – Handpicked products from trusted brands.
+			</p>
+
+
+			<p>
+				<Icon Name="IconName.Check" /> <strong>Affordable prices</strong> – Competitive deals on everything you love.
+			</p>
+
+
+			<p>
+				<Icon Name="IconName.Check" /> <strong>Fast shipping</strong> – Enjoy quick, reliable delivery straight to your door.
+			</p>
+
+			<p>
+				<Icon Name="IconName.Check" /> <strong>Customer satisfaction</strong> – Our top priority is you!
+			</p>
+			
+			<p class="mt-3">
+				Explore our wide range of categories and discover unbeatable offers. <br /> Start shopping today and experience the ease and convenience of <strong>Order Handler!</strong>
+			</p>
+			
+		</Paragraph>
+	</Div>
+	<Image Class="card" Border="Border.Is1.Rounded" Source="Images/img4.jpg" Text="Portable computer" Display="Display.Block" Width="Width.Is100" />
 </Container>
 
