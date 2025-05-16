@@ -1,5 +1,6 @@
 ﻿@using OrderHandler.Client.Services
 @inherits LayoutComponentBase
+@inject CartService CartService
 
 <div class="page">
     <div class="sidebar">
@@ -10,7 +11,7 @@
         <Bar Breakpoint="Breakpoint.Desktop"
              Background="Background.Light"
              ThemeContrast="ThemeContrast.Light">
-            <BarBrand Margin="Margin.Is5.FromStart" TextColor="TextColor.Danger">
+            <BarBrand Margin="Margin.Is5.FromStart" Style="color: darkcyan">
                 <BarLink TextWeight="TextWeight.Bold" To="/">Order Handler</BarLink>
             </BarBrand>
             <BarToggler />
@@ -30,7 +31,7 @@
                                 <a href="/store/cart">
                                     <div>
                                         <Icon TextColor="TextColor.Dark" Name="IconName.ShoppingCart" Margin="Margin.Is0.FromStart"></Icon>
-                                        @* <span class="badge">@CartService.CartBadgeQuantity</span> *@
+                                        <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">@CartService.CartBadgeQuantity</span>
                                     </div>
                                 </a>
                             </BarItem>
