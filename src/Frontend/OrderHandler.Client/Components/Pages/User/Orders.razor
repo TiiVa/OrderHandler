@@ -13,41 +13,42 @@
 @if (ShowOrders)
 {
     
-    <Div Margin="Margin.Is5.FromTop" class= "row justify-content-center">
-        <Heading Size="HeadingSize.Is6"  class="text-center">Below is an overview of your orders, @fullName!</Heading>
-    </Div>
+   
 
-    <Container Position="Position.Relative" Margin="Margin.Is5.FromTop">
-        <Div class="row justify-content-center mb-5">
-            @if (UserOrdersDtoList.Count > 0)
-            {
-                <Virtualize Items="UserOrdersDtoList">
-                    <Card TextAlignment="TextAlignment.Center" Shadow="Shadow.Default" class="col-md-3 justify-content-center d-flex" Margin="Margin.Is3.FromBottom.Is3.FromEnd">
-                        <CardBody TextColor="TextColor.Dark">
-                            <CardHeader Margin="Margin.Is3.FromBottom" TextWeight="TextWeight.SemiBold">Order number @context.Id</CardHeader>
-                            <CardText> Products in order: </CardText>
-                            <br/>
-                            @foreach (var product in @context.OrderProducts)
-                            {
-                                <li>Product @product.ProductId - @product.Name</li>
-                                <CardText>Price @product.Price:-, @product.Quantity pcs</CardText>
-                                <br/>
-                            }
-                            <br />
-                        </CardBody>
-                        <CardFooter TextWeight="TextWeight.Bold" Margin="Margin.Is4.FromBottom">Order total: @context.OrderSum:-</CardFooter>
-                    </Card>
-                <br/>
-                </Virtualize>
-            }
-            @if (UserOrdersDtoList.Count < 1)
-            {
-                <Div class="row justify-content-center">
-                    No orders to display. <br/> <br/> <Anchor TextSize="TextSize.Large" class="row justify-content-center"  To="/store/products" TextColor="TextColor.Primary">Start shopping here!</Anchor>
-                </Div>
-            }
-        </Div>
-    </Container>
+	<Container Position="Position.Relative" Margin="Margin.Is5.FromTop">
+		<Div Margin="Margin.Is5.FromTop.Is5.FromBottom" class= "row justify-content-center">
+			<Heading Size="HeadingSize.Is6"  class="text-center">Below is an overview of your orders, @fullName!</Heading>
+		</Div>
+		<Div class="row justify-content-center mb-5">
+			@if (UserOrdersDtoList.Count > 0)
+			{
+				<Virtualize Items="UserOrdersDtoList">
+					<Card TextAlignment="TextAlignment.Center" class="card col-md-3 justify-content-center d-flex" Margin="Margin.Is3.FromBottom.Is3.FromEnd">
+						<CardBody TextColor="TextColor.Dark">
+							<CardHeader Margin="Margin.Is3.FromBottom" TextWeight="TextWeight.SemiBold">Order number @context.Id</CardHeader>
+							<CardText> Products in order: </CardText>
+							<br/>
+							@foreach (var product in @context.OrderProducts)
+							{
+								<li>Product @product.ProductId - @product.Name</li>
+								<CardText>Price @product.Price:-, @product.Quantity pcs</CardText>
+								<br/>
+							}
+							<br/>
+						</CardBody>
+						<CardFooter TextWeight="TextWeight.Bold" Margin="Margin.Is4.FromBottom">Order total: @context.OrderSum:-</CardFooter>
+					</Card>
+					<br/>
+				</Virtualize>
+			}
+			@if (UserOrdersDtoList.Count < 1)
+			{
+				<Div class="row justify-content-center">
+					No orders to display. <br/> <br/> <Anchor TextSize="TextSize.Large" class="row justify-content-center" To="/store/products" TextColor="TextColor.Primary">Start shopping here!</Anchor>
+				</Div>
+			}
+		</Div>
+	</Container>
 }
 
 <Div class="row justify-content-center">
