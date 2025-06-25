@@ -6,6 +6,21 @@ a, .btn-link {
     color: #006bb7;
 }
 
+.bg-white {
+    --bs-bg-opacity: 1;
+    background-color: rgba(var(--bs-white-rgb),var(--bs-bg-opacity)) !important
+}
+
+.bg-body {
+    --bs-bg-opacity: 1;
+    background-color: rgba(var(--bs-body-rgb),var(--bs-bg-opacity)) !important
+}
+
+.bg-transparent {
+    --bs-bg-opacity: 1;
+    background-color: transparent !important
+}
+
 .btn-primary {
     color: #fff;
     background-color: #1b6ec2;
@@ -58,6 +73,43 @@ h1:focus {
 
 .card:hover {
     box-shadow: 0 10px 16px rgba(0,0,0,0.2);
+}
+
+/* Container to hold the entire layout */
+.container {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+    background-color: white;
+}
+
+/* Header section with the top image */
+.header {
+    flex: 0 1 auto;
+    text-align: center;
+    margin: 0; /* Ensure no margin around the header */
+    padding: 0; /* Ensure no padding around the header */
+}
+
+    .header img {
+        align-content: center;
+        width: 100%;
+        height: 10%;
+        display: block; /* Remove any extra space below the image */
+    }
+
+/* Main content section */
+.main-content {
+    flex: 1 0 auto;
+    padding: 20px;
+    text-align: center;
+    background-color: transparent;
+}
+
+.top-bar-fixed {
+    position: sticky;
+    top: 0;
+    z-index: 1000; /* Ensure it stays on top of other elements */
 }
 
 
