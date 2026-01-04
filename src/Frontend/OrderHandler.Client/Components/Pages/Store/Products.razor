@@ -27,31 +27,8 @@
 
 
 
-    <Container Position="Position.Relative" Margin="Margin.Is5.FromTop.Is5.FromBottom">
-        <Div class="row justify-content-center">
-            <Virtualize Items="@FilteredProducts">
-                <Card TextAlignment="TextAlignment.Center" class="card col-md-3 justify-content-center d-flex" Margin="Margin.Is3.FromBottom.Is3.FromEnd">
-                    <CardImage Source="Images/img4.jpg" Alt="Placeholder image" />
-                    <CardBody TextColor="TextColor.Dark">
-                        <CardHeader TextSize="TextSize.Heading5">@context.Name</CardHeader>
-                        <br/>
-                        <CardText TextColor="TextColor.Secondary">@context.Description</CardText>
-                        <br/>
-                        <CardText>Price: @context.Price:-</CardText>
-                        <CardText>Item number: @context.Id</CardText>
-                        <br/>
-                    </CardBody>
-                    <Div Margin="Margin.Is4.FromBottom">
-                        <Button Size="Size.ExtraSmall" Clicked="() => RemoveFromCart(context.Id)" Color="Color.Danger" Outline Margin="Margin.Is2.FromTop">
-                            Remove <Icon Name="IconName.CartMinus"/>
-                        </Button>
-                        <Button Size="Size.ExtraSmall" Clicked="() => AddToCart(context.Id)" Color="Color.Success" Margin="Margin.Is2.FromTop">
-                            Add <Icon Name="IconName.CartPlus"/>
-                        </Button>
-                    </Div>
-                </Card>
-            </Virtualize>
-        </Div>
+    @* <Container Position="Position.Relative" Margin="Margin.Is5.FromTop.Is5.FromBottom"> *@
+       
 
         <Offcanvas @ref="offcanvasRef" ShowBackdrop Placement="Placement.End">
             <OffcanvasHeader>
@@ -110,7 +87,7 @@
                 </Row>
             </OffcanvasBody>
         </Offcanvas>
-    </Container>
+    @* </Container> *@
 
 
 
@@ -152,10 +129,10 @@
 
 }
 
-@if (ShowSingleProduct)
+@* @if (ShowSingleProduct)
 {
     <Div class="row justify-content-center mt-5">
-        <Card @bind-Value="@SearchedProduct" TextAlignment="TextAlignment.Center" Shadow="Shadow.Default" class="col-md-3 justify-content-center d-flex" Margin="Margin.Is3.FromBottom.Is3.FromEnd">
+        <Card @bind-Value="@SearchedProducts" TextAlignment="TextAlignment.Center" Shadow="Shadow.Default" class="col-md-3 justify-content-center d-flex" Margin="Margin.Is3.FromBottom.Is3.FromEnd">
             <CardImage Source="Images/img4.jpg" Alt="Placeholder image" />
             <CardBody TextColor="TextColor.Dark">
                 <CardTitle Size="5">@SearchedProduct.Name</CardTitle>
@@ -175,8 +152,34 @@
             </CardBody>
         </Card>
     </Div>
+} *@
+@if (ShowFilteredProducts)
+{
+    <Div class="row justify-content-center">
+        <Virtualize Items="@FilteredProducts">
+            <Card TextAlignment="TextAlignment.Center" class="card col-md-3 justify-content-center d-flex" Margin="Margin.Is3.FromBottom.Is3.FromEnd">
+                <CardImage Source="Images/img4.jpg" Alt="Placeholder image" />
+                <CardBody TextColor="TextColor.Dark">
+                    <CardHeader TextSize="TextSize.Heading5">@context.Name</CardHeader>
+                    <br />
+                    <CardText TextColor="TextColor.Secondary">@context.Description</CardText>
+                    <br />
+                    <CardText>Price: @context.Price:-</CardText>
+                    <CardText>Item number: @context.Id</CardText>
+                    <br />
+                </CardBody>
+                <Div Margin="Margin.Is4.FromBottom">
+                    <Button Size="Size.ExtraSmall" Clicked="() => RemoveFromCart(context.Id)" Color="Color.Danger" Outline Margin="Margin.Is2.FromTop">
+                        Remove <Icon Name="IconName.CartMinus" />
+                    </Button>
+                    <Button Size="Size.ExtraSmall" Clicked="() => AddToCart(context.Id)" Color="Color.Success" Margin="Margin.Is2.FromTop">
+                        Add <Icon Name="IconName.CartPlus" />
+                    </Button>
+                </Div>
+            </Card>
+        </Virtualize>
+    </Div>
 }
-
 
 
 

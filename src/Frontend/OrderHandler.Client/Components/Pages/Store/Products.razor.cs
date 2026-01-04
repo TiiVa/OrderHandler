@@ -19,13 +19,14 @@ public partial class Products : ComponentBase
     [Inject] NavigationManager NavigationManager { get; set; }
     public ClaimsPrincipal? ClaimsPrincipal { get; set; }
     private List<ProductDto> ProductDtoList { get; set; } = new();
-    private ProductDto SearchedProduct { get; set; }
+    private List<ProductDto> SearchedProducts { get; set; } = [];
     public bool ShowShop { get; set; }
     private Offcanvas? offcanvasRef;
     private bool _modalVisible;
     private bool ShowSingleProduct { get; set; }
     private List<ProductDto> FilteredProducts = [];
     private string? _searchQuery = string.Empty;
+    private bool ShowFilteredProducts { get; set; }
 
 
     private async Task SeeAllProducts()
@@ -61,6 +62,7 @@ public partial class Products : ComponentBase
 
         
         ShowShop = true;
+        ShowFilteredProducts = true;
 
     }
 
@@ -72,18 +74,15 @@ public partial class Products : ComponentBase
             _searchQuery = value;
             SearchProducts(value);
         }
+        
     }
 
     private async Task SearchProducts(string searchQuery)
     {
-        FilteredProducts = ProductDtoList.Where(p => p.Name.ToLower().Contains(searchQuery.ToLower())).ToList();
+        FilteredProducts = ProductDtoList.Where(p => p.Name.ToLower().StartsWith(searchQuery.ToLower())).ToList();
 
-        if (FilteredProducts.Count == 1)
-        {
-            SearchedProduct = FilteredProducts[0];
-            FilteredProducts.Clear();
-            ShowSingleProduct = true;
-        }
+        ShowFilteredProducts = true;
+
     }
 
 
